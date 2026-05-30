@@ -4,3 +4,6 @@ scikit-learn==1.2.2
 joblib==1.2.0
 matplotlib==3.6.3
 seaborn==0.12.2
+# Optional export formats for Reel Studio (app degrades gracefully if absent)
+reportlab==4.1.0
+python-docx==1.1.2
