@@ -4,3 +4,5 @@ __pycache__/
 generated/
 reel_preview.html
 *.preview.html
+reel-studio.zip
+*.zip
