@@ -18,6 +18,7 @@ from reelstudio import generate_project
 from reelstudio.models import CONTENT_TYPES, VOICE_STYLES
 from reelstudio import exporters as ex
 from reelstudio import integrations as integ
+from reelstudio.assets import AssetManifest, load_manifest
 
 st.set_page_config(page_title="Reel Studio", page_icon="🎬", layout="wide")
 
@@ -82,16 +83,24 @@ def sidebar_inputs() -> dict:
 # --------------------------------------------------------------------------- #
 # Multimedia Studio — vertical reel mockup
 # --------------------------------------------------------------------------- #
-def render_reel_card(sc, palette_color: str) -> str:
+def render_reel_card(sc, palette_color: str, media_url: str | None = None) -> str:
     accent = _ROLE_COLOR.get(sc.role, "#6366f1")
     overlay = html.escape(sc.text_overlay)
     subtitle = html.escape(sc.subtitle.replace("\n", " "))
     vis = html.escape(sc.visual_type)
+    # Real generated media (if attached) sits behind the overlays; otherwise a
+    # tinted gradient placeholder stands in for the scene background.
+    if media_url:
+        bg = (f"background:#0b1020;\">"
+              f"<img src=\"{html.escape(media_url)}\" style=\"position:absolute;inset:0;"
+              f"width:100%;height:100%;object-fit:cover;\"/>")
+    else:
+        bg = (f"background:linear-gradient(160deg,{accent}33,{palette_color}cc,#0b1020);\">")
     return f"""
     <div style="width:200px;flex:0 0 auto;">
       <div style="position:relative;width:200px;height:356px;border-radius:18px;
-           overflow:hidden;background:linear-gradient(160deg,{accent}33,{palette_color}cc,#0b1020);
-           box-shadow:0 8px 24px rgba(0,0,0,.35);border:1px solid #ffffff22;">
+           overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.35);border:1px solid #ffffff22;
+           {bg}
         <div style="position:absolute;top:8px;left:8px;background:{accent};color:#fff;
              font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">
              #{sc.number} {html.escape(sc.role.upper())}</div>
@@ -112,11 +121,20 @@ def render_reel_card(sc, palette_color: str) -> str:
     """
 
 
-def multimedia_studio(project):
+def multimedia_studio(project, manifest: AssetManifest):
     st.subheader("📱 Vertical 9:16 Reel Preview")
     st.caption("Scene-by-scene mockup — background, overlay text, subtitle, timing, transition & music.")
+    if manifest.canva_edit_url() or any(manifest.scene_media_url(s.number) for s in project.scenes):
+        link = manifest.canva_edit_url()
+        st.success(
+            "🟢 Live assets attached — generated scene backgrounds shown below."
+            + (f"  ·  [Open the live Canva design ↗]({link})" if link else "")
+        )
     palette_color = "#1e293b"
-    cards = "".join(render_reel_card(sc, palette_color) for sc in project.scenes)
+    cards = "".join(
+        render_reel_card(sc, palette_color, manifest.scene_media_url(sc.number))
+        for sc in project.scenes
+    )
     # CTA end screen card
     cta_card = f"""
       <div style="width:200px;flex:0 0 auto;">
@@ -275,19 +293,24 @@ def tab_capcut(project):
     st.download_button("Download CapCut brief", brief, file_name="capcut_brief.md")
 
 
-def tab_thumbnail(project):
+def tab_thumbnail(project, manifest: AssetManifest):
     t = project.thumbnail
     st.subheader("🖼️ Thumbnail")
     c1, c2 = st.columns([1, 2])
     with c1:
-        st.markdown(
-            f"""<div style="width:160px;height:285px;border-radius:14px;
-            background:linear-gradient(160deg,#f59e0b,#0b1020);display:flex;
-            align-items:flex-start;justify-content:center;padding-top:20px;
-            color:#fff;font-weight:800;font-size:18px;text-align:center;
-            box-shadow:0 8px 24px rgba(0,0,0,.35);">{html.escape(t.text)}</div>""",
-            unsafe_allow_html=True,
-        )
+        thumb_url = manifest.thumbnail_url()
+        if thumb_url:
+            st.image(thumb_url, caption="Generated thumbnail base", width=160)
+            st.caption("Add the headline text over this in Canva.")
+        else:
+            st.markdown(
+                f"""<div style="width:160px;height:285px;border-radius:14px;
+                background:linear-gradient(160deg,#f59e0b,#0b1020);display:flex;
+                align-items:flex-start;justify-content:center;padding-top:20px;
+                color:#fff;font-weight:800;font-size:18px;text-align:center;
+                box-shadow:0 8px 24px rgba(0,0,0,.35);">{html.escape(t.text)}</div>""",
+                unsafe_allow_html=True,
+            )
     with c2:
         st.write(f"**Text:** {t.text}")
         st.write(f"**Layout:** {t.layout}")
@@ -313,7 +336,72 @@ def tab_assets(project):
     st.write(f"**Icon animation:** {mg['icon_animation_suggestions']}")
 
 
-def tab_export(project):
+def live_media_panel(project, manifest: AssetManifest):
+    """Generate real media via a configured provider, or attach media URLs
+    (e.g. produced by the Canva / image-video MCP servers) into the preview."""
+    st.subheader("🎨 Live media generation")
+
+    img_provider = integ.first_available("image")
+    voice_provider = integ.first_available("voice")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("**Image** " + (f"· {img_provider.name} ✅" if img_provider else "· not connected ⚪"))
+        scene_nums = [s.number for s in project.scenes]
+        sel = st.selectbox("Scene to illustrate", scene_nums, key="img_scene")
+        scene = next(s for s in project.scenes if s.number == sel)
+        prompt = scene.image_prompt.as_text() if scene.image_prompt else scene.visual_description
+        if st.button("Generate image", disabled=img_provider is None, use_container_width=True):
+            with st.spinner(f"Generating with {img_provider.name}…"):
+                res = img_provider.render(prompt, out_path=f"generated/scene_{sel}.png", aspect_ratio="9:16")
+            if res.get("status") == "ok" and res.get("path"):
+                manifest.set_scene(sel, res["path"], provider=img_provider.name, role=scene.role)
+                st.image(res["path"], width=200)
+                st.success("Attached to the Video Preview.")
+            else:
+                st.warning(res.get("message", "Generation failed."))
+        if img_provider is None:
+            st.caption("Set STABILITY_API_KEY for live image generation, or attach a URL below.")
+
+    with c2:
+        st.markdown("**Voiceover** " + (f"· {voice_provider.name} ✅" if voice_provider else "· not connected ⚪"))
+        if st.button("Generate voiceover (full script)", disabled=voice_provider is None, use_container_width=True):
+            with st.spinner(f"Generating with {voice_provider.name}…"):
+                res = voice_provider.render(project.audio.voiceover_script, out_path="generated/voiceover.mp3")
+            if res.get("status") == "ok" and res.get("path"):
+                st.audio(res["path"])
+                st.success("Voiceover generated.")
+            else:
+                st.warning(res.get("message", "Generation failed."))
+        if voice_provider is None:
+            st.caption("Set ELEVENLABS_API_KEY for live text-to-speech.")
+
+    st.markdown("**Attach generated media by URL** (e.g. a Canva/MCP image output)")
+    with st.form("attach_media", clear_on_submit=True):
+        a1, a2, a3 = st.columns([1, 3, 1])
+        with a1:
+            kind = st.selectbox("Target", ["Scene", "Thumbnail"])
+        with a2:
+            url = st.text_input("Media URL")
+        with a3:
+            scene_n = st.number_input("Scene #", min_value=1, max_value=len(project.scenes), value=1)
+        if st.form_submit_button("Attach") and url:
+            if kind == "Thumbnail":
+                manifest.set_thumbnail(url)
+            else:
+                sc = next((s for s in project.scenes if s.number == int(scene_n)), None)
+                manifest.set_scene(int(scene_n), url, role=sc.role if sc else "")
+            st.success(f"Attached. Check the Video Preview / Thumbnail tab.")
+
+    link = manifest.canva_edit_url()
+    if link:
+        st.markdown(f"🎨 **Live Canva design:** [open to edit ↗]({link})")
+    else:
+        st.caption("Canva: generate a design via the Canva MCP / CANVA_API_KEY, then paste its link or export an MP4.")
+    st.download_button("Download asset manifest (JSON)", manifest.to_json(), file_name="reel_assets.json")
+
+
+def tab_export(project, manifest: AssetManifest):
     st.subheader("⬇️ Export")
     if not integ.any_renderer_available():
         st.warning(integ.LIMITATION_MESSAGE)
@@ -353,6 +441,9 @@ def tab_export(project):
         st.dataframe(integ.status_table(), use_container_width=True, hide_index=True)
         st.caption(integ.LIMITATION_MESSAGE)
 
+    st.divider()
+    live_media_panel(project, manifest)
+
 
 # --------------------------------------------------------------------------- #
 # Main
@@ -360,7 +451,8 @@ def tab_export(project):
 def main():
     inputs = sidebar_inputs()
 
-    if inputs["submitted"] or "project" not in st.session_state:
+    first_load = "project" not in st.session_state
+    if inputs["submitted"] or first_load:
         st.session_state.project = generate_project(
             topic=inputs["topic"],
             content_type=inputs["content_type"],
@@ -372,8 +464,12 @@ def main():
             key_points=inputs["key_points"] or None,
             color_palette=inputs["color_palette"],
         )
+        # On first load show the demo's live-generated assets; a fresh
+        # generation starts with an empty manifest (no stale media).
+        st.session_state.manifest = load_manifest() if first_load and not inputs["submitted"] else AssetManifest()
 
     project = st.session_state.project
+    manifest = st.session_state.manifest
 
     st.title("🎬 " + project.title)
     m = st.columns(4)
@@ -400,7 +496,7 @@ def main():
     with tabs[3]:
         tab_storyboard(project)
     with tabs[4]:
-        multimedia_studio(project)
+        multimedia_studio(project, manifest)
     with tabs[5]:
         tab_image_prompts(project)
     with tabs[6]:
@@ -414,11 +510,11 @@ def main():
     with tabs[10]:
         tab_capcut(project)
     with tabs[11]:
-        tab_thumbnail(project)
+        tab_thumbnail(project, manifest)
     with tabs[12]:
         tab_assets(project)
     with tabs[13]:
-        tab_export(project)
+        tab_export(project, manifest)
 
 
 if __name__ == "__main__":
