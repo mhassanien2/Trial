@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.streamlit/
+generated/
+reel_preview.html
+*.preview.html
+reel-studio.zip
+*.zip

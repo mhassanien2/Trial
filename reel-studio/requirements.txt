@@ -1,0 +1,6 @@
+streamlit==1.32.2
+# Optional export formats (app degrades gracefully if absent)
+reportlab==4.1.0
+python-docx==1.1.2
+# Live image/voice generation (Stability AI, ElevenLabs)
+requests==2.31.0
