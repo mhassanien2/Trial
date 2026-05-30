@@ -1,0 +1,30 @@
+{
+  "topic": "A major breakthrough in affordable home solar batteries",
+  "generated_at": "2026-05-30",
+  "note": "Real assets generated live via the connected MCP image + Canva servers. Image URLs are hosted by the generation provider; the Canva design was saved to the connected account.",
+  "providers": {
+    "image": "Higgsfield (nano_banana) via image-generation MCP",
+    "design": "Canva via Canva MCP"
+  },
+  "thumbnail": {
+    "kind": "image",
+    "provider": "Higgsfield nano_banana",
+    "job_id": "6f46fb53-7a47-430e-92fa-700a94131896",
+    "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3Do0f95st2mJq0fDCNSexGiop7M/hf_20260530_211824_6f46fb53-7a47-430e-92fa-700a94131896.png"
+  },
+  "scenes": {
+    "1": {
+      "kind": "image",
+      "role": "hook",
+      "provider": "Higgsfield nano_banana",
+      "job_id": "e4177032-0bc9-478f-9ff9-f82d6bf08069",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3Do0f95st2mJq0fDCNSexGiop7M/hf_20260530_211934_e4177032-0bc9-478f-9ff9-f82d6bf08069.png"
+    }
+  },
+  "canva": {
+    "design_id": "DAHLLRY5gPA",
+    "title": "Instagram Story: Affordable Solar Power",
+    "edit_url": "https://www.canva.com/d/BPHXrl3nz64vS0r",
+    "view_url": "https://www.canva.com/d/Hku0NLhu8NgXNtt"
+  }
+}
