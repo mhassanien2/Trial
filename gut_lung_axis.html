@@ -116,6 +116,11 @@
   button.btn.primary { background: var(--accent); color: #062019; border-color: var(--accent); }
   button.btn.primary:hover { filter: brightness(1.08); }
 
+  .refs { margin: 8px 0 16px; padding-left: 20px; color: var(--muted); font-size: 13.5px; }
+  .refs li { margin: 10px 0; line-height: 1.5; }
+  .refs a { color: var(--accent-2); text-decoration: none; border-bottom: 1px solid transparent; }
+  .refs a:hover { border-bottom-color: var(--accent-2); }
+
   footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 30px; }
   footer .disc2 { margin-top: 6px; color: #b89a4a; }
 </style>
@@ -161,7 +166,7 @@
       <div class="vital"><div class="k">Sputum culture</div><div class="v"><em>P. aeruginosa</em> <span class="flag ab">ABN</span></div></div>
       <div class="vital"><div class="k">α₁-antitrypsin level</div><div class="v">Normal</div></div>
     </div>
-    <p style="color:var(--muted); font-size:13px; margin-top:14px;">Reference reminders: sweat chloride ≥60 mmol/L is abnormal; fecal elastase &lt;200 µg/g suggests pancreatic exocrine insufficiency.</p>
+    <p style="color:var(--muted); font-size:13px; margin-top:14px;">Reference reminders: sweat chloride ≥60 mmol/L supports a CF diagnosis (30–59 mmol/L is an intermediate result needing further evaluation); fecal elastase &lt;200 µg/g suggests pancreatic exocrine insufficiency.</p>
   </section>
 
   <!-- IMAGING -->
@@ -205,6 +210,21 @@
         <button class="btn" id="resetBtn">↺ Try again</button>
       </div>
     </div>
+  </section>
+
+  <!-- REFERENCES -->
+  <section class="card">
+    <div class="eyebrow">Evidence &amp; Further Reading</div>
+    <h2>📚 References</h2>
+    <p style="color:var(--muted); margin-top:0; font-size:14px;">Teaching points in this case were cross-checked against the following sources (via PubMed). Decision limits and clinical practice should always follow current local guidelines.</p>
+    <ol class="refs">
+      <li>Price CE, O'Toole GA. <em>The Gut-Lung Axis in Cystic Fibrosis.</em> J Bacteriol. 2021;203(20):e0031121. <a href="https://doi.org/10.1128/JB.00311-21" target="_blank" rel="noopener">doi:10.1128/JB.00311-21</a></li>
+      <li>Ng C, Major G, Smyth AR. <em>Timing of pancreatic enzyme replacement therapy (PERT) in cystic fibrosis.</em> Cochrane Database Syst Rev. 2021;8(8):CD013488. <a href="https://doi.org/10.1002/14651858.CD013488.pub2" target="_blank" rel="noopener">doi:10.1002/14651858.CD013488.pub2</a></li>
+      <li>Li L, Somerset S. <em>Dietary intake and nutritional status of micronutrients in adults with cystic fibrosis in relation to current recommendations.</em> Clin Nutr. 2015;35(4):775–82. <a href="https://doi.org/10.1016/j.clnu.2015.06.004" target="_blank" rel="noopener">doi:10.1016/j.clnu.2015.06.004</a></li>
+      <li>Massie J, McWhinney A, Greed L, et al. <em>Australasian guideline for the performance of sweat chloride testing (3rd ed.): to support cystic fibrosis screening, diagnosis and monitoring.</em> Clin Chem Lab Med. 2025;63(10):1956–64. <a href="https://doi.org/10.1515/cclm-2025-0433" target="_blank" rel="noopener">doi:10.1515/cclm-2025-0433</a></li>
+      <li>Narayana JK, Aliberti S, Mac Aogáin M, et al. <em>Microbial Dysregulation of the Gut-Lung Axis in Bronchiectasis.</em> Am J Respir Crit Care Med. 2023;207(7):908–20. <a href="https://doi.org/10.1164/rccm.202205-0893OC" target="_blank" rel="noopener">doi:10.1164/rccm.202205-0893OC</a></li>
+    </ol>
+    <p style="color:var(--muted); font-size:12px; margin-bottom:0;">Citations sourced via PubMed (NIH/NLM). Distractor-disease facts ("why not the others") reflect standard textbook physiology and were not individually referenced here.</p>
   </section>
 
   <footer>
