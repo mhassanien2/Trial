@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gut–Lung Axis: Interactive Case Review</title>
+<style>
+  :root {
+    --bg: #0f1720;
+    --panel: #18222e;
+    --panel-2: #1f2c3a;
+    --ink: #e8eef4;
+    --muted: #9fb0c0;
+    --accent: #4cc9b0;
+    --accent-2: #6ea8fe;
+    --good: #3ec97a;
+    --bad: #ff6b6b;
+    --warn: #ffce5c;
+    --line: #2b3a4a;
+    --shadow: 0 8px 30px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 600px at 80% -10%, #1b2a3a 0%, var(--bg) 60%);
+    color: var(--ink);
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  header.hero { text-align: center; margin-bottom: 22px; }
+  .badge {
+    display: inline-block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px;
+    background: rgba(76,201,176,.08);
+  }
+  h1 { font-size: clamp(26px, 4vw, 40px); margin: 14px 0 6px; }
+  .subtitle { color: var(--muted); max-width: 640px; margin: 0 auto; }
+
+  .disclaimer {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: rgba(255,206,92,.08); border: 1px solid rgba(255,206,92,.35);
+    border-radius: 12px; padding: 12px 16px; margin: 22px 0; color: #ffe6a8; font-size: 14px;
+  }
+  .disclaimer strong { color: var(--warn); }
+  .disclaimer .icon { font-size: 20px; line-height: 1.2; }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border: 1px solid var(--line); border-radius: 16px; padding: 22px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 { margin: 0 0 4px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+  .card .eyebrow { color: var(--accent-2); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
+
+  .vitals { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 8px; }
+  .vital { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .vital .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .vital .v { font-size: 17px; font-weight: 600; margin-top: 2px; }
+  .vital .v .flag { font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 6px; margin-left: 6px; }
+  .flag.hi { background: rgba(255,107,107,.18); color: #ff9a9a; }
+  .flag.lo { background: rgba(110,168,254,.18); color: #a9c7ff; }
+  .flag.ab { background: rgba(255,206,92,.18); color: #ffd874; }
+
+  .clue-list { list-style: none; padding: 0; margin: 8px 0 0; }
+  .clue-list li { padding: 9px 0; border-bottom: 1px dashed var(--line); display: flex; gap: 10px; }
+  .clue-list li:last-child { border-bottom: none; }
+  .clue-list .tag { flex: 0 0 auto; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--accent); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; height: fit-content; }
+
+  .options { display: grid; gap: 12px; margin-top: 6px; }
+  .option {
+    text-align: left; width: 100%; cursor: pointer; color: var(--ink);
+    background: rgba(255,255,255,.03); border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; font-size: 15px; transition: all .15s ease; display: flex; gap: 12px; align-items: center;
+  }
+  .option:hover:not(:disabled) { border-color: var(--accent-2); background: rgba(110,168,254,.08); transform: translateY(-1px); }
+  .option:disabled { cursor: default; }
+  .option .letter {
+    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+    background: rgba(255,255,255,.06); font-weight: 700; border: 1px solid var(--line);
+  }
+  .option.correct { border-color: var(--good); background: rgba(62,201,122,.12); }
+  .option.correct .letter { background: var(--good); color: #08210f; }
+  .option.wrong { border-color: var(--bad); background: rgba(255,107,107,.12); }
+  .option.wrong .letter { background: var(--bad); color: #2a0808; }
+  .option .mark { margin-left: auto; font-weight: 700; }
+
+  .reveal { display: none; margin-top: 18px; animation: fade .4s ease; }
+  .reveal.show { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .verdict { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .verdict.ok { color: var(--good); }
+  .verdict.no { color: var(--bad); }
+
+  .answer-box { background: rgba(76,201,176,.07); border: 1px solid rgba(76,201,176,.3); border-radius: 12px; padding: 16px 18px; }
+  .answer-box h3 { margin: 0 0 8px; color: var(--accent); }
+  .answer-box p { margin: 8px 0; }
+  .answer-box .axis { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .answer-box .axis strong { color: var(--accent-2); }
+
+  .pearls { margin-top: 12px; }
+  .pearls summary { cursor: pointer; color: var(--accent-2); font-weight: 600; }
+  .pearls ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); }
+  .pearls li { margin: 6px 0; }
+
+  .controls { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  button.btn {
+    cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 11px 20px; font-size: 15px;
+    font-weight: 600; color: var(--ink); background: var(--panel-2); transition: all .15s;
+  }
+  button.btn:hover { border-color: var(--accent); }
+  button.btn.primary { background: var(--accent); color: #062019; border-color: var(--accent); }
+  button.btn.primary:hover { filter: brightness(1.08); }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 30px; }
+  footer .disc2 { margin-top: 6px; color: #b89a4a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="badge">Gut–Lung Axis · Trainee Review</span>
+    <h1>The Gut–Lung Axis</h1>
+    <p class="subtitle">Work through a real-style case. Read the clues, commit to a diagnosis, then reveal the reasoning behind the multisystem answer.</p>
+  </header>
+
+  <div class="disclaimer" role="note">
+    <span class="icon">⚠️</span>
+    <div><strong>Educational tool only — not for clinical use.</strong> This case is simplified for teaching the gut–lung axis. It is not medical advice and must never guide the diagnosis or management of a real patient.</div>
+  </div>
+
+  <!-- CASE -->
+  <section class="card">
+    <div class="eyebrow">Case Presentation</div>
+    <h2>🩺 24-year-old with chronic cough &amp; loose, greasy stools</h2>
+    <p>A 24-year-old presents with a years-long history of productive cough, recurrent chest infections, and progressive breathlessness. Since childhood they have had bulky, foul-smelling, oily stools that float, along with poor weight gain despite a good appetite. A sibling died in infancy of "lung problems." On exam: low BMI, finger clubbing, and coarse crackles at both lung bases.</p>
+
+    <div class="eyebrow" style="margin-top:18px">Vitals &amp; Anthropometrics</div>
+    <div class="vitals">
+      <div class="vital"><div class="k">SpO₂ (room air)</div><div class="v">91% <span class="flag lo">LOW</span></div></div>
+      <div class="vital"><div class="k">Resp. rate</div><div class="v">22 /min <span class="flag hi">HIGH</span></div></div>
+      <div class="vital"><div class="k">BMI</div><div class="v">17.5 <span class="flag lo">LOW</span></div></div>
+      <div class="vital"><div class="k">Temp</div><div class="v">37.1 °C</div></div>
+    </div>
+  </section>
+
+  <!-- LABS -->
+  <section class="card">
+    <div class="eyebrow">Key Labs</div>
+    <h2>🧪 Laboratory clues</h2>
+    <div class="vitals">
+      <div class="vital"><div class="k">Sweat chloride</div><div class="v">88 mmol/L <span class="flag hi">HIGH</span></div></div>
+      <div class="vital"><div class="k">Fecal elastase</div><div class="v">&lt;100 µg/g <span class="flag lo">LOW</span></div></div>
+      <div class="vital"><div class="k">Fat-soluble vits (A,D,E,K)</div><div class="v">Low <span class="flag lo">LOW</span></div></div>
+      <div class="vital"><div class="k">Fasting glucose</div><div class="v">7.4 mmol/L <span class="flag hi">HIGH</span></div></div>
+      <div class="vital"><div class="k">Sputum culture</div><div class="v"><em>P. aeruginosa</em> <span class="flag ab">ABN</span></div></div>
+      <div class="vital"><div class="k">α₁-antitrypsin level</div><div class="v">Normal</div></div>
+    </div>
+    <p style="color:var(--muted); font-size:13px; margin-top:14px;">Reference reminders: sweat chloride ≥60 mmol/L is abnormal; fecal elastase &lt;200 µg/g suggests pancreatic exocrine insufficiency.</p>
+  </section>
+
+  <!-- IMAGING -->
+  <section class="card">
+    <div class="eyebrow">Imaging</div>
+    <h2>🖥️ Imaging clues</h2>
+    <ul class="clue-list">
+      <li><span class="tag">CXR</span><span>Hyperinflation with "tram-track" markings and upper-lobe–predominant ring shadows.</span></li>
+      <li><span class="tag">HRCT chest</span><span>Diffuse cylindrical <strong>bronchiectasis</strong>, mucus plugging, and a "tree-in-bud" pattern — most marked in the upper lobes.</span></li>
+      <li><span class="tag">Abdomen US</span><span>Small, fatty, partially fibrotic pancreas; mild fatty change in the liver.</span></li>
+    </ul>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="card" id="quiz">
+    <div class="eyebrow">Your Call</div>
+    <h2>❓ What is the most likely multisystem diagnosis?</h2>
+    <p style="color:var(--muted); margin-top:0;">Pick one option. You'll get the answer and the gut–lung axis reasoning straight after.</p>
+    <div class="options" id="options"></div>
+
+    <!-- REVEAL -->
+    <div class="reveal" id="reveal">
+      <div class="verdict" id="verdict"></div>
+      <div class="answer-box">
+        <h3>✅ Cystic Fibrosis (CFTR-related disease)</h3>
+        <p>The unifying diagnosis is <strong>cystic fibrosis</strong>. A single defective <em>CFTR</em> chloride channel explains every system at once: thick airway secretions cause recurrent infection, bronchiectasis, and chronic <em>Pseudomonas</em> colonization; thick pancreatic secretions block enzyme delivery, causing <strong>exocrine pancreatic insufficiency</strong> (low fecal elastase, steatorrhea, fat-soluble vitamin deficiency) and, over time, <strong>CF-related diabetes</strong> (raised glucose). The <strong>elevated sweat chloride (88 mmol/L)</strong> is the clincher, and the family history fits an autosomal-recessive condition.</p>
+        <div class="axis">
+          <strong>The gut–lung axis link:</strong> CF is a model of bidirectional gut–lung crosstalk. CFTR dysfunction creates dysbiosis and an abnormal, inflamed gut, while the lungs suffer chronic infection. Pancreatic insufficiency and malnutrition worsen lung outcomes, and the altered gut microbiome shapes systemic and airway immunity. Treating the gut (enzyme replacement, nutrition, vitamins) measurably improves lung trajectory — the two organs are managed as one connected system.
+        </div>
+        <details class="pearls">
+          <summary>Why not the other options?</summary>
+          <ul>
+            <li><strong>α₁-antitrypsin deficiency:</strong> causes basal (lower-lobe) emphysema + liver disease — but here the AAT level is normal, the disease is upper-lobe bronchiectasis, and there's no liver failure or pancreatic insufficiency.</li>
+            <li><strong>Eosinophilic granulomatosis with polyangiitis (EGPA):</strong> features asthma, marked eosinophilia, and vasculitic GI/skin/nerve disease — not steatorrhea, high sweat chloride, or childhood-onset malabsorption.</li>
+            <li><strong>Common variable immunodeficiency (CVID):</strong> gives recurrent sinopulmonary infection and GI disease via low immunoglobulins — but it doesn't raise sweat chloride or cause pancreatic exocrine insufficiency.</li>
+            <li><strong>Whipple disease:</strong> a gut infection (<em>T. whipplei</em>) with arthralgia and malabsorption that can involve the lung — but it lacks the high sweat chloride, bronchiectasis pattern, and genetic/family picture seen here.</li>
+          </ul>
+        </details>
+      </div>
+      <div class="controls">
+        <button class="btn" id="resetBtn">↺ Try again</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Built as a trainee self-study aid for reviewing the gut–lung axis.</div>
+    <div class="disc2">⚠️ Educational tool only — not for clinical use.</div>
+  </footer>
+
+</div>
+
+<script>
+  const OPTIONS = [
+    { letter: "A", text: "α₁-antitrypsin deficiency", correct: false },
+    { letter: "B", text: "Cystic fibrosis (CFTR-related disease)", correct: true },
+    { letter: "C", text: "Eosinophilic granulomatosis with polyangiitis (EGPA)", correct: false },
+    { letter: "D", text: "Common variable immunodeficiency (CVID)", correct: false },
+    { letter: "E", text: "Whipple disease", correct: false },
+  ];
+
+  const optionsEl = document.getElementById("options");
+  const revealEl = document.getElementById("reveal");
+  const verdictEl = document.getElementById("verdict");
+  const resetBtn = document.getElementById("resetBtn");
+
+  function render() {
+    optionsEl.innerHTML = "";
+    OPTIONS.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.innerHTML = `<span class="letter">${opt.letter}</span><span>${opt.text}</span>`;
+      btn.addEventListener("click", () => choose(opt, btn));
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function choose(opt, btn) {
+    const allBtns = optionsEl.querySelectorAll(".option");
+    allBtns.forEach(b => b.disabled = true);
+
+    OPTIONS.forEach((o, i) => {
+      const b = allBtns[i];
+      if (o.correct) {
+        b.classList.add("correct");
+        const m = document.createElement("span"); m.className = "mark"; m.textContent = "✓"; b.appendChild(m);
+      }
+    });
+
+    if (opt.correct) {
+      verdictEl.className = "verdict ok";
+      verdictEl.textContent = "✅ Correct — nicely reasoned.";
+    } else {
+      btn.classList.add("wrong");
+      const m = document.createElement("span"); m.className = "mark"; m.textContent = "✗"; btn.appendChild(m);
+      verdictEl.className = "verdict no";
+      verdictEl.textContent = "❌ Not quite — see the worked answer below.";
+    }
+
+    revealEl.classList.add("show");
+    revealEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  resetBtn.addEventListener("click", () => {
+    revealEl.classList.remove("show");
+    render();
+    document.getElementById("quiz").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  render();
+</script>
+</body>
+</html>
