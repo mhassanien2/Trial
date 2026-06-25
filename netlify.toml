@@ -1,0 +1,4 @@
+# Publish only the static educational page — never the repo's datasets/models.
+[build]
+  publish = "public"
+  command = ""
