@@ -1,0 +1,60 @@
+{
+  "app": {
+    "name": "AccreditGenius",
+    "tagline": "Quality & Accreditation Assistant for Higher Education"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "programs": "Programs",
+    "standards": "Standards Explorer",
+    "documents": "Documents",
+    "templates": "Templates",
+    "reviews": "AI Reviewer",
+    "evidence": "Evidence",
+    "settings": "Settings"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInTitle": "Sign in to AccreditGenius",
+    "signInSubtitle": "Enter your institutional credentials",
+    "email": "Email",
+    "password": "Password",
+    "signInWithGoogle": "Continue with Google",
+    "or": "or",
+    "invalidCredentials": "Invalid email or password",
+    "accountInactive": "Your account is inactive. Contact your administrator.",
+    "signingIn": "Signing in…"
+  },
+  "roles": {
+    "ADMIN": "Administrator",
+    "QA_DIRECTOR": "QA Director",
+    "PROGRAM_COORDINATOR": "Program Coordinator",
+    "FACULTY": "Faculty",
+    "REVIEWER": "Reviewer"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}",
+    "institution": "Institution",
+    "yourRole": "Your role",
+    "programs": "Programs",
+    "programsDescription": "Active academic programs",
+    "standardsPacks": "Standards Packs",
+    "standardsPacksDescription": "Available accreditation frameworks",
+    "documents": "Documents",
+    "documentsDescription": "Uploaded and generated documents",
+    "comingSoon": "Available in an upcoming phase"
+  },
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "arabic": "العربية",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search"
+  }
+}

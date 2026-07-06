@@ -1,0 +1,637 @@
+// AccreditGenius — Prisma schema (Phase 1, approved)
+// Multi-tenant: every domain table is scoped by institutionId.
+// Official standards packs are global (institutionId = null).
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector, pg_trgm]
+}
+
+// ───────────────────────── Enums ─────────────────────────
+
+enum Role {
+  ADMIN
+  QA_DIRECTOR
+  PROGRAM_COORDINATOR
+  FACULTY
+  REVIEWER // read-only
+}
+
+enum DegreeLevel {
+  DIPLOMA
+  BACHELOR
+  MASTERS
+  DOCTORATE
+}
+
+enum PackOrigin {
+  OFFICIAL // shipped with app (NCAAA, ETEC/SAQF, NAQAAE, Egyptian NQF)
+  CUSTOM // ingested from a user-uploaded standards document
+}
+
+enum DocumentKind {
+  STANDARDS_SOURCE // uploaded standards/NQF doc feeding a custom pack
+  TEMPLATE_SOURCE // uploaded DOCX template (e.g. TP-153 Course Spec)
+  EVIDENCE // evidence repository file
+  REVIEW_SUBJECT // completed quality doc submitted to AI Reviewer
+  GENERATED_EXPORT // DOCX/PDF produced by the generator
+  OTHER
+}
+
+enum IngestStatus {
+  NOT_APPLICABLE // e.g. generated exports are never ingested
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum DocLanguage {
+  EN
+  AR
+}
+
+enum GeneratedDocStatus {
+  DRAFT
+  IN_REVIEW
+  FINAL
+}
+
+enum ReviewStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum Verdict {
+  MET
+  PARTIALLY_MET
+  NOT_MET
+  NOT_EVALUATED
+}
+
+enum PdcaPhase {
+  PLAN
+  DO
+  CHECK
+  ACT
+}
+
+enum PlanItemStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+}
+
+enum ActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  DEAD // exhausted retries
+}
+
+// ─────────────────── Tenancy, auth, RBAC ───────────────────
+
+model Institution {
+  id        String   @id @default(cuid())
+  nameEn    String
+  nameAr    String
+  country   String // ISO-3166 alpha-2: "SA", "EG", ...
+  logoUrl   String?
+  settings  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users              User[]
+  programs           Program[]
+  standardsPacks     StandardsPack[]
+  documents          Document[]
+  templates          Template[]
+  generatedDocuments GeneratedDocument[]
+  reviews            Review[]
+  evidenceLinks      EvidenceLink[]
+  planItems          PlanItem[]
+  improvementActions ImprovementAction[]
+  readinessSnapshots ReadinessSnapshot[]
+  criterionMappings  CriterionMapping[]
+  mockPanelRuns      MockPanelRun[]
+  auditLogs          AuditLog[]
+  aiInteractions     AiInteraction[]
+  jobs               Job[]
+}
+
+model User {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  name          String?
+  email         String      @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // credentials provider; null for Google-only accounts
+  role          Role        @default(FACULTY)
+  locale        String      @default("en") // "en" | "ar" UI preference
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  accounts           Account[]
+  sessions           Session[]
+  programMemberships ProgramMember[]
+  ownedActions       ImprovementAction[] @relation("ActionOwner")
+  auditLogs          AuditLog[]
+  aiInteractions     AiInteraction[]
+  uploadedDocuments  Document[]          @relation("UploadedBy")
+
+  @@index([institutionId, role])
+}
+
+// NextAuth standard models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─────────────────────── Programs ───────────────────────
+
+model Program {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  code          String // internal program code
+  nameEn        String
+  nameAr        String
+  degreeLevel   DegreeLevel
+  department    String?
+  nqfLevel      String? // e.g. "SAQF L6", "EgNQF L7"
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  members            ProgramMember[]
+  generatedDocuments GeneratedDocument[]
+  reviews            Review[]
+  evidenceLinks      EvidenceLink[]
+  planItems          PlanItem[]
+  improvementActions ImprovementAction[]
+  readinessSnapshots ReadinessSnapshot[]
+  criterionMappings  CriterionMapping[]
+  mockPanelRuns      MockPanelRun[]
+  documents          Document[]
+
+  @@unique([institutionId, code])
+  @@index([institutionId])
+}
+
+model ProgramMember {
+  id            String  @id @default(cuid())
+  programId     String
+  program       Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleInProgram Role // program-scoped role override
+
+  @@unique([programId, userId])
+}
+
+// ─────────────── Standards knowledge base ───────────────
+
+model StandardsPack {
+  id               String       @id @default(cuid())
+  institutionId    String? // null = OFFICIAL global pack
+  institution      Institution? @relation(fields: [institutionId], references: [id])
+  origin           PackOrigin
+  country          String // "SA", "EG", or custom
+  code             String // "NCAAA-PROG-2022", "NAQAAE-HE-2015", ...
+  nameEn           String
+  nameAr           String?
+  version          String       @default("1.0")
+  description      String?
+  sourceDocumentId String?      @unique // for CUSTOM packs
+  sourceDocument   Document?    @relation("PackSource", fields: [sourceDocumentId], references: [id])
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  standards          Standard[]
+  reviews            Review[]
+  readinessSnapshots ReadinessSnapshot[]
+
+  @@unique([code, version])
+  @@index([institutionId, country])
+}
+
+model Standard {
+  id            String        @id @default(cuid())
+  packId        String
+  pack          StandardsPack @relation(fields: [packId], references: [id], onDelete: Cascade)
+  code          String // e.g. "S1"
+  titleEn       String
+  titleAr       String?
+  descriptionEn String?
+  descriptionAr String?
+  sortOrder     Int           @default(0)
+
+  criteria Criterion[]
+
+  @@unique([packId, code])
+  @@index([packId])
+}
+
+model Criterion {
+  id            String   @id @default(cuid())
+  standardId    String
+  standard      Standard @relation(fields: [standardId], references: [id], onDelete: Cascade)
+  code          String // e.g. "1-1"
+  titleEn       String
+  titleAr       String?
+  descriptionEn String?
+  descriptionAr String?
+  sortOrder     Int      @default(0)
+
+  indicators           Indicator[]
+  evidenceRequirements EvidenceRequirement[]
+  evidenceLinks        EvidenceLink[]
+  reviewFindings       ReviewFinding[]
+  mappingsFrom         CriterionMapping[]    @relation("MapFrom")
+  mappingsTo           CriterionMapping[]    @relation("MapTo")
+
+  @@unique([standardId, code])
+  @@index([standardId])
+}
+
+model Indicator {
+  id          String    @id @default(cuid())
+  criterionId String
+  criterion   Criterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  code        String // e.g. "KPI-P-01"
+  textEn      String
+  textAr      String?
+  sortOrder   Int       @default(0)
+
+  @@unique([criterionId, code])
+}
+
+model EvidenceRequirement {
+  id          String    @id @default(cuid())
+  criterionId String
+  criterion   Criterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  textEn      String
+  textAr      String?
+  sortOrder   Int       @default(0)
+}
+
+// ───────────── Documents, chunks (RAG), storage ─────────────
+
+model Document {
+  id            String       @id @default(cuid())
+  institutionId String
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+  programId     String?
+  program       Program?     @relation(fields: [programId], references: [id])
+  uploadedById  String?
+  uploadedBy    User?        @relation("UploadedBy", fields: [uploadedById], references: [id])
+  kind          DocumentKind
+  title         String
+  language      DocLanguage  @default(EN)
+  storageKey    String // StorageProvider key
+  mimeType      String
+  sizeBytes     Int
+  sha256        String // dedupe + audit input hash
+  version       Int          @default(1)
+  ingestStatus  IngestStatus @default(NOT_APPLICABLE)
+  ingestError   String?
+  pageCount     Int?
+  metadata      Json         @default("{}") // country, standard code, form code (e.g. TP-153)...
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  chunks           DocumentChunk[]
+  packAsSource     StandardsPack?  @relation("PackSource")
+  templateAsSource Template?       @relation("TemplateSource")
+  evidenceLinks    EvidenceLink[]
+  reviews          Review[]        @relation("ReviewSubject")
+  mockPanelRuns    MockPanelRun[]
+
+  @@index([institutionId, kind])
+  @@index([institutionId, programId])
+  @@index([sha256])
+}
+
+model DocumentChunk {
+  id            String                       @id @default(cuid())
+  documentId    String
+  document      Document                     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunkIndex    Int
+  content       String
+  // tsvector column `content_tsv` is added as a GENERATED column in a raw SQL migration (hybrid keyword search)
+  embedding     Unsupported("vector(1536)")?
+  page          Int?
+  headingPath   String? // "Standard 4 > Criterion 4-1"
+  criterionCode String? // metadata filter for retrieval
+  tokenCount    Int?
+  metadata      Json                         @default("{}")
+
+  @@unique([documentId, chunkIndex])
+  @@index([documentId])
+}
+
+// ─────────────── Templates & generated documents ───────────────
+
+model Template {
+  id               String      @id @default(cuid())
+  institutionId    String
+  institution      Institution @relation(fields: [institutionId], references: [id])
+  sourceDocumentId String      @unique // the uploaded DOCX
+  sourceDocument   Document    @relation("TemplateSource", fields: [sourceDocumentId], references: [id])
+  name             String
+  formCode         String? // NCAAA code: "TP-153", "TP-151", "TI-102"...
+  language         DocLanguage @default(EN)
+  version          Int         @default(1)
+  schemaJson       Json // parsed sections → fields → tables (drives wizard + export)
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  generatedDocuments GeneratedDocument[]
+
+  @@index([institutionId, formCode])
+}
+
+model GeneratedDocument {
+  id            String             @id @default(cuid())
+  institutionId String
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  programId     String
+  program       Program            @relation(fields: [programId], references: [id])
+  templateId    String
+  template      Template           @relation(fields: [templateId], references: [id])
+  title         String
+  language      DocLanguage        @default(EN)
+  status        GeneratedDocStatus @default(DRAFT)
+  contentJson   Json               @default("{}") // field values keyed to template schema
+  exportDocxKey String? // storage keys of last exports
+  exportPdfKey  String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  planItems PlanItem[]
+
+  @@index([institutionId, programId, status])
+}
+
+// ──────────────────── AI Reviewer ────────────────────
+
+model Review {
+  id             String        @id @default(cuid())
+  institutionId  String
+  institution    Institution   @relation(fields: [institutionId], references: [id])
+  programId      String?
+  program        Program?      @relation(fields: [programId], references: [id])
+  documentId     String // the reviewed upload
+  document       Document      @relation("ReviewSubject", fields: [documentId], references: [id])
+  packId         String
+  pack           StandardsPack @relation(fields: [packId], references: [id])
+  status         ReviewStatus  @default(PENDING)
+  readinessScore Int? // 0–100
+  summary        String?
+  reportDocxKey  String? // exported review report
+  error          String?
+  createdAt      DateTime      @default(now())
+  completedAt    DateTime?
+
+  findings ReviewFinding[]
+
+  @@index([institutionId, programId])
+}
+
+model ReviewFinding {
+  id              String    @id @default(cuid())
+  reviewId        String
+  review          Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  criterionId     String
+  criterion       Criterion @relation(fields: [criterionId], references: [id])
+  verdict         Verdict
+  score           Int? // 0–100 per criterion
+  findingText     String
+  citations       Json      @default("[]") // [{documentId, chunkId, page, quote}]
+  recommendations Json      @default("[]") // actionable improvement list items
+
+  improvementActions ImprovementAction[]
+
+  @@index([reviewId])
+}
+
+// ─────────────── Quality cycle workspace ───────────────
+
+model EvidenceLink {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  programId     String
+  program       Program     @relation(fields: [programId], references: [id])
+  documentId    String // Document.kind = EVIDENCE
+  document      Document    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  criterionId   String
+  criterion     Criterion   @relation(fields: [criterionId], references: [id])
+  note          String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([documentId, criterionId, programId])
+  @@index([institutionId, programId, criterionId]) // heat-map query
+}
+
+model PlanItem {
+  id                  String             @id @default(cuid())
+  institutionId       String
+  institution         Institution        @relation(fields: [institutionId], references: [id])
+  programId           String
+  program             Program            @relation(fields: [programId], references: [id])
+  phase               PdcaPhase
+  title               String
+  description         String?
+  status              PlanItemStatus     @default(PLANNED)
+  dueDate             DateTime?
+  generatedDocumentId String?
+  generatedDocument   GeneratedDocument? @relation(fields: [generatedDocumentId], references: [id])
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([institutionId, programId, phase])
+}
+
+model ImprovementAction {
+  id            String         @id @default(cuid())
+  institutionId String
+  institution   Institution    @relation(fields: [institutionId], references: [id])
+  programId     String
+  program       Program        @relation(fields: [programId], references: [id])
+  findingId     String? // optional link back to a review finding
+  finding       ReviewFinding? @relation(fields: [findingId], references: [id])
+  title         String
+  description   String?
+  ownerId       String?
+  owner         User?          @relation("ActionOwner", fields: [ownerId], references: [id])
+  status        ActionStatus   @default(OPEN)
+  dueDate       DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([institutionId, programId, status])
+}
+
+model ReadinessSnapshot {
+  id            String        @id @default(cuid())
+  institutionId String
+  institution   Institution   @relation(fields: [institutionId], references: [id])
+  programId     String
+  program       Program       @relation(fields: [programId], references: [id])
+  packId        String
+  pack          StandardsPack @relation(fields: [packId], references: [id])
+  score         Int // 0–100 at a point in time (trendline)
+  source        String // "review:<id>" | "manual"
+  createdAt     DateTime      @default(now())
+
+  @@index([institutionId, programId, packId, createdAt])
+}
+
+// ──────────────── Differentiators ────────────────
+
+model CriterionMapping {
+  id              String      @id @default(cuid())
+  institutionId   String
+  institution     Institution @relation(fields: [institutionId], references: [id])
+  programId       String?
+  program         Program?    @relation(fields: [programId], references: [id])
+  fromCriterionId String
+  fromCriterion   Criterion   @relation("MapFrom", fields: [fromCriterionId], references: [id])
+  toCriterionId   String
+  toCriterion     Criterion   @relation("MapTo", fields: [toCriterionId], references: [id])
+  overlapScore    Float // 0–1 similarity
+  rationale       String?
+  createdAt       DateTime    @default(now())
+
+  @@unique([institutionId, fromCriterionId, toCriterionId])
+}
+
+model MockPanelRun {
+  id            String       @id @default(cuid())
+  institutionId String
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+  programId     String
+  program       Program      @relation(fields: [programId], references: [id])
+  documentId    String // the SSR under simulation
+  document      Document     @relation(fields: [documentId], references: [id])
+  status        ReviewStatus @default(PENDING)
+  resultsJson   Json         @default("{}") // per-persona critiques + site-visit Q&A
+  createdAt     DateTime     @default(now())
+  completedAt   DateTime?
+
+  @@index([institutionId, programId])
+}
+
+// ─────────────── Audit trail & job queue ───────────────
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  action        String // "document.upload", "review.run", ...
+  entityType    String
+  entityId      String?
+  metadata      Json        @default("{}")
+  createdAt     DateTime    @default(now())
+
+  @@index([institutionId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model AiInteraction {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  feature       String // "qa_chat", "generator", "reviewer", "mock_panel", "mapper"
+  model         String // e.g. "claude-sonnet-4-6"
+  promptVersion String // version tag of file in lib/ai/prompts/
+  inputHash     String // sha256 of full prompt payload
+  outputText    String?
+  citations     Json        @default("[]")
+  tokensIn      Int?
+  tokensOut     Int?
+  latencyMs     Int?
+  createdAt     DateTime    @default(now())
+
+  @@index([institutionId, feature, createdAt])
+}
+
+model Job {
+  id            String       @id @default(cuid())
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  type          String // "ingest_document", "run_review", "export_docx", ...
+  payload       Json
+  status        JobStatus    @default(PENDING)
+  attempts      Int          @default(0)
+  maxAttempts   Int          @default(3)
+  runAfter      DateTime     @default(now())
+  lockedAt      DateTime?
+  lockedBy      String?
+  lastError     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status, runAfter])
+}

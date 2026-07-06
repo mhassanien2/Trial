@@ -1,0 +1,60 @@
+{
+  "app": {
+    "name": "أكريدت جينيوس",
+    "tagline": "مساعد الجودة والاعتماد الأكاديمي لمؤسسات التعليم العالي"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "programs": "البرامج",
+    "standards": "مستكشف المعايير",
+    "documents": "الوثائق",
+    "templates": "النماذج",
+    "reviews": "المراجع الذكي",
+    "evidence": "الأدلة والشواهد",
+    "settings": "الإعدادات"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "signInTitle": "تسجيل الدخول إلى أكريدت جينيوس",
+    "signInSubtitle": "أدخل بيانات الاعتماد المؤسسية الخاصة بك",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "signInWithGoogle": "المتابعة باستخدام جوجل",
+    "or": "أو",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "accountInactive": "حسابك غير نشط. يرجى التواصل مع مسؤول النظام.",
+    "signingIn": "جارٍ تسجيل الدخول…"
+  },
+  "roles": {
+    "ADMIN": "مسؤول النظام",
+    "QA_DIRECTOR": "مدير الجودة",
+    "PROGRAM_COORDINATOR": "منسق البرنامج",
+    "FACULTY": "عضو هيئة التدريس",
+    "REVIEWER": "مراجع"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً، {name}",
+    "institution": "المؤسسة",
+    "yourRole": "دورك",
+    "programs": "البرامج",
+    "programsDescription": "البرامج الأكاديمية النشطة",
+    "standardsPacks": "حزم المعايير",
+    "standardsPacksDescription": "أطر الاعتماد المتاحة",
+    "documents": "الوثائق",
+    "documentsDescription": "الوثائق المرفوعة والمولّدة",
+    "comingSoon": "متاح في مرحلة قادمة"
+  },
+  "common": {
+    "language": "اللغة",
+    "english": "English",
+    "arabic": "العربية",
+    "loading": "جارٍ التحميل…",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث"
+  }
+}
