@@ -10,7 +10,7 @@ services:
     name: accreditgenius
     runtime: node
     plan: free
-    branch: claude/accreditgenius-saas-build-y2kut8
+    branch: main
     # migrate (+ optional seed) then build
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm prisma generate && pnpm db:setup && pnpm build
     startCommand: pnpm start
@@ -51,7 +51,7 @@ services:
     name: accreditgenius-jobs
     runtime: node
     plan: free
-    branch: claude/accreditgenius-saas-build-y2kut8
+    branch: main
     schedule: "* * * * *"
     buildCommand: corepack enable && pnpm install --frozen-lockfile
     startCommand: >-
