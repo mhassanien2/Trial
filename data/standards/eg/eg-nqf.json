@@ -1,0 +1,190 @@
+{
+  "code": "EG-NQF",
+  "country": "EG",
+  "nameEn": "Egyptian National Qualifications Framework",
+  "nameAr": "الإطار الوطني المصري للمؤهلات",
+  "version": "1.0",
+  "description": "Egyptian NQF level descriptors for higher education qualifications. Descriptor text pending official wording (TODO:OFFICIAL_TEXT).",
+  "standards": [
+    {
+      "code": "L4",
+      "titleEn": "Egyptian NQF Level 4 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 4 من الإطار الوطني المصري للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L4-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L4-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L4-3",
+          "titleEn": "Competence descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L5",
+      "titleEn": "Egyptian NQF Level 5 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 5 من الإطار الوطني المصري للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L5-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L5-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L5-3",
+          "titleEn": "Competence descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L6",
+      "titleEn": "Egyptian NQF Level 6 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 6 من الإطار الوطني المصري للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L6-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L6-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L6-3",
+          "titleEn": "Competence descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L7",
+      "titleEn": "Egyptian NQF Level 7 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 7 من الإطار الوطني المصري للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L7-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L7-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L7-3",
+          "titleEn": "Competence descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L8",
+      "titleEn": "Egyptian NQF Level 8 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 8 من الإطار الوطني المصري للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L8-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L8-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L8-3",
+          "titleEn": "Competence descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    }
+  ]
+}

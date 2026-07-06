@@ -6,12 +6,94 @@
  * Run with: pnpm db:seed
  * Demo password for all users: Demo1234!
  */
-import { PrismaClient, Role, DegreeLevel } from "@prisma/client";
+import fs from "node:fs";
+import path from "node:path";
+
+import { PrismaClient, Role, DegreeLevel, PackOrigin } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+import { standardsPackFileSchema } from "../src/lib/standards/schema";
 
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "Demo1234!";
+
+/** Load every pack JSON from /data/standards/{sa,eg} and upsert it. */
+async function seedStandardsPacks() {
+  const base = path.join(__dirname, "..", "data", "standards");
+  const files = fs
+    .readdirSync(base, { recursive: true, encoding: "utf8" })
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => path.join(base, f));
+
+  for (const file of files) {
+    const parsed = standardsPackFileSchema.parse(
+      JSON.parse(fs.readFileSync(file, "utf8"))
+    );
+
+    const pack = await prisma.standardsPack.upsert({
+      where: { code_version: { code: parsed.code, version: parsed.version } },
+      update: {
+        nameEn: parsed.nameEn,
+        nameAr: parsed.nameAr,
+        description: parsed.description,
+        country: parsed.country,
+      },
+      create: {
+        code: parsed.code,
+        version: parsed.version,
+        country: parsed.country,
+        nameEn: parsed.nameEn,
+        nameAr: parsed.nameAr,
+        description: parsed.description,
+        origin: PackOrigin.OFFICIAL,
+        institutionId: null, // official packs are global
+      },
+    });
+
+    // Replace the structure wholesale so re-seeding stays idempotent.
+    await prisma.standard.deleteMany({ where: { packId: pack.id } });
+    for (const [i, std] of parsed.standards.entries()) {
+      await prisma.standard.create({
+        data: {
+          packId: pack.id,
+          code: std.code,
+          titleEn: std.titleEn,
+          titleAr: std.titleAr,
+          descriptionEn: std.descriptionEn,
+          descriptionAr: std.descriptionAr,
+          sortOrder: i,
+          criteria: {
+            create: std.criteria.map((c, j) => ({
+              code: c.code,
+              titleEn: c.titleEn,
+              titleAr: c.titleAr,
+              descriptionEn: c.descriptionEn,
+              descriptionAr: c.descriptionAr,
+              sortOrder: j,
+              indicators: {
+                create: c.indicators.map((ind, k) => ({
+                  code: ind.code,
+                  textEn: ind.textEn,
+                  textAr: ind.textAr,
+                  sortOrder: k,
+                })),
+              },
+              evidenceRequirements: {
+                create: c.evidenceRequirements.map((e, k) => ({
+                  textEn: e.textEn,
+                  textAr: e.textAr,
+                  sortOrder: k,
+                })),
+              },
+            })),
+          },
+        },
+      });
+    }
+    console.log(`  Pack: ${parsed.code}@${parsed.version} (${parsed.standards.length} standards)`);
+  }
+}
 
 async function main() {
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
@@ -104,6 +186,9 @@ async function main() {
       create: { programId, userId, roleInProgram: role },
     });
   }
+
+  console.log("Standards packs:");
+  await seedStandardsPacks();
 
   console.log("Seed complete:");
   console.log(`  Institution: ${institution.nameEn} (${institution.id})`);

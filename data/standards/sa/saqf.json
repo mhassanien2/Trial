@@ -1,0 +1,190 @@
+{
+  "code": "SAQF",
+  "country": "SA",
+  "nameEn": "Saudi Arabia Qualifications Framework (SAQF)",
+  "nameAr": "الإطار السعودي للمؤهلات",
+  "version": "1.0",
+  "description": "SAQF level descriptors used by NCAAA NQF-consistency forms (TP-150-L4/L5/L6 and graduate levels 7-8). Descriptor text pending official wording (TODO:OFFICIAL_TEXT).",
+  "standards": [
+    {
+      "code": "L4",
+      "titleEn": "SAQF Level 4 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 4 من الإطار السعودي للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L4-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L4-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L4-3",
+          "titleEn": "Values descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L5",
+      "titleEn": "SAQF Level 5 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 5 من الإطار السعودي للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L5-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L5-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L5-3",
+          "titleEn": "Values descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L6",
+      "titleEn": "SAQF Level 6 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 6 من الإطار السعودي للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L6-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L6-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L6-3",
+          "titleEn": "Values descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L7",
+      "titleEn": "SAQF Level 7 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 7 من الإطار السعودي للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L7-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L7-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L7-3",
+          "titleEn": "Values descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    },
+    {
+      "code": "L8",
+      "titleEn": "SAQF Level 8 — TODO:OFFICIAL_TEXT",
+      "titleAr": "المستوى 8 من الإطار السعودي للمؤهلات — TODO:OFFICIAL_TEXT",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "L8-1",
+          "titleEn": "Knowledge descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L8-2",
+          "titleEn": "Skills descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        },
+        {
+          "code": "L8-3",
+          "titleEn": "Values descriptor — TODO:OFFICIAL_TEXT",
+          "titleAr": "TODO:OFFICIAL_TEXT",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [],
+          "evidenceRequirements": []
+        }
+      ]
+    }
+  ]
+}

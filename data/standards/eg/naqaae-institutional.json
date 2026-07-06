@@ -1,0 +1,700 @@
+{
+  "code": "NAQAAE-INST",
+  "country": "EG",
+  "nameEn": "NAQAAE Institutional Accreditation Standards (Higher Education)",
+  "nameAr": "معايير الاعتماد المؤسسي - الهيئة القومية لضمان جودة التعليم والاعتماد",
+  "version": "1.0",
+  "description": "NAQAAE institutional accreditation standards for higher education institutions in Egypt. All standard and criterion text is pending official wording (TODO:OFFICIAL_TEXT).",
+  "standards": [
+    {
+      "code": "I1",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 1)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 1)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "1-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 1-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 1-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "1-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "1-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 1-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 1-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "1-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "1-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 1-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 1-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "1-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I2",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 2)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 2)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "2-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 2-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 2-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "2-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "2-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 2-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 2-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "2-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "2-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 2-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 2-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "2-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I3",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 3)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 3)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "3-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 3-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 3-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "3-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "3-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 3-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 3-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "3-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "3-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 3-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 3-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "3-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I4",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 4)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 4)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "4-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 4-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 4-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "4-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "4-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 4-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 4-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "4-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "4-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 4-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 4-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "4-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I5",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 5)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 5)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "5-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 5-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 5-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "5-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "5-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 5-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 5-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "5-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "5-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 5-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 5-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "5-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I6",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 6)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 6)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "6-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 6-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 6-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "6-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "6-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 6-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 6-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "6-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "6-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 6-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 6-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "6-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I7",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 7)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 7)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "7-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 7-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 7-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "7-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "7-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 7-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 7-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "7-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "7-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 7-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 7-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "7-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I8",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 8)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 8)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "8-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 8-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 8-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "8-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "8-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 8-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 8-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "8-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "8-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 8-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 8-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "8-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I9",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 9)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 9)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "9-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 9-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 9-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "9-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "9-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 9-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 9-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "9-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "9-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 9-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 9-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "9-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "I10",
+      "titleEn": "TODO:OFFICIAL_TEXT (Institutional Standard 10)",
+      "titleAr": "TODO:OFFICIAL_TEXT (المعيار المؤسسي 10)",
+      "descriptionEn": "TODO:OFFICIAL_TEXT",
+      "descriptionAr": "TODO:OFFICIAL_TEXT",
+      "criteria": [
+        {
+          "code": "10-1",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 10-1)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 10-1)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "10-1-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "10-2",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 10-2)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 10-2)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "10-2-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        },
+        {
+          "code": "10-3",
+          "titleEn": "TODO:OFFICIAL_TEXT (criterion 10-3)",
+          "titleAr": "TODO:OFFICIAL_TEXT (المحك 10-3)",
+          "descriptionEn": "TODO:OFFICIAL_TEXT",
+          "descriptionAr": "TODO:OFFICIAL_TEXT",
+          "indicators": [
+            {
+              "code": "10-3-I1",
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ],
+          "evidenceRequirements": [
+            {
+              "textEn": "TODO:OFFICIAL_TEXT",
+              "textAr": "TODO:OFFICIAL_TEXT"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
