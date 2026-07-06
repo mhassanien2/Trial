@@ -11,8 +11,10 @@ services:
     runtime: node
     plan: free
     branch: main
-    # migrate (+ optional seed) then build
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm prisma generate && pnpm db:setup && pnpm build
+    # migrate (+ optional seed) then build. Render provides pnpm from the
+    # lockfile + packageManager field — no `corepack enable` (its symlink
+    # write to /usr/bin fails on Render's read-only filesystem).
+    buildCommand: pnpm install --frozen-lockfile && pnpm prisma generate && pnpm db:setup && pnpm build
     startCommand: pnpm start
     healthCheckPath: /en/login
     autoDeploy: true
