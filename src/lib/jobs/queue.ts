@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { ingestDocumentHandler } from "./handlers/ingest-document";
 import { parseTemplateHandler } from "./handlers/parse-template";
 import { runReviewHandler } from "./handlers/run-review";
+import { runMockPanelHandler } from "./handlers/run-mock-panel";
 
 export type JobHandler = (payload: unknown, jobId: string) => Promise<void>;
 
@@ -14,6 +15,7 @@ const HANDLERS: Record<string, JobHandler> = {
   ingest_document: ingestDocumentHandler,
   parse_template: parseTemplateHandler,
   run_review: runReviewHandler,
+  run_mock_panel: runMockPanelHandler,
 };
 
 export async function enqueueJob(

@@ -224,6 +224,53 @@
     "gaps": "Gaps",
     "totalCriteria": "criteria"
   },
+  "trend": {
+    "title": "Readiness trendline",
+    "subtitle": "Readiness score over time",
+    "empty": "No readiness history yet. Run an AI review to record a data point.",
+    "latest": "Latest",
+    "points": "{count} data points"
+  },
+  "panel": {
+    "title": "Mock Accreditation Panel",
+    "subtitle": "Three AI reviewer personas critique the SSR and predict site-visit questions",
+    "selectDoc": "Self-Study Report",
+    "run": "Run mock panel",
+    "running": "Convening panel…",
+    "noDocs": "Upload and ingest an SSR (as \"Document for AI review\") first.",
+    "processing": "The panel is deliberating — this updates automatically.",
+    "critique": "Critique",
+    "strengths": "Strengths",
+    "concerns": "Concerns",
+    "questions": "Likely site-visit questions",
+    "suggestedAnswer": "Suggested answer",
+    "aiDisabled": "AI simulation requires ANTHROPIC_API_KEY.",
+    "viewRun": "View panel",
+    "personas": {
+      "standards_auditor": "Standards Auditor",
+      "curriculum_expert": "Curriculum Expert",
+      "student_experience_reviewer": "Student-Experience Reviewer"
+    }
+  },
+  "mapper": {
+    "title": "Cross-Standard Mapper",
+    "subtitle": "Map this program's evidence against two standards packs to see overlap and gaps",
+    "fromPack": "Primary pack",
+    "toPack": "Compare against",
+    "compute": "Build mapping",
+    "computing": "Mapping…",
+    "samePackError": "Choose two different packs",
+    "overlapScore": "Similarity",
+    "fromEvidence": "Evidence (primary)",
+    "toEvidence": "Evidence (compared)",
+    "both": "Overlap (both)",
+    "yes": "✓",
+    "no": "—",
+    "matrix": "Mapping matrix",
+    "primaryCriterion": "Primary criterion",
+    "mappedCriterion": "Best-matching criterion",
+    "note": "Mapping quality improves once official standard text is loaded."
+  },
   "reviews": {
     "title": "AI Reviewer",
     "subtitle": "Rubric-based compliance review of a completed document against a standards pack",

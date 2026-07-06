@@ -4,6 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { PdcaBoard } from "@/components/programs/pdca-board";
 import { ActionTracker } from "@/components/programs/action-tracker";
 import { EvidenceHeatMap } from "@/components/programs/evidence-heatmap";
+import { ReadinessTrend } from "@/components/programs/readiness-trend";
+import { MockPanel } from "@/components/programs/mock-panel";
+import { CrossMapper } from "@/components/programs/cross-mapper";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db";
 import { can } from "@/lib/rbac";
@@ -31,7 +34,8 @@ export default async function ProgramWorkspacePage({
   });
   if (!program) notFound();
 
-  const [planItems, drafts, reviews, actions, members, latest] = await Promise.all([
+  const [planItems, drafts, reviews, actions, members, latest, snapshots, ssrDocs, latestPanel] =
+    await Promise.all([
     prisma.planItem.findMany({
       where: { programId: id },
       orderBy: { createdAt: "asc" },
@@ -64,6 +68,25 @@ export default async function ProgramWorkspacePage({
     prisma.readinessSnapshot.findFirst({
       where: { programId: id },
       orderBy: { createdAt: "desc" },
+    }),
+    prisma.readinessSnapshot.findMany({
+      where: { programId: id },
+      orderBy: { createdAt: "asc" },
+      select: { score: true, createdAt: true },
+    }),
+    prisma.document.findMany({
+      where: {
+        institutionId: tenant.institutionId,
+        ingestStatus: "READY",
+        kind: { in: ["REVIEW_SUBJECT", "OTHER"] },
+      },
+      select: { id: true, title: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.mockPanelRun.findFirst({
+      where: { programId: id },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
     }),
   ]);
 
@@ -170,6 +193,13 @@ export default async function ProgramWorkspacePage({
         ) : null}
       </div>
 
+      <ReadinessTrend
+        points={snapshots.map((s) => ({
+          score: s.score,
+          createdAt: s.createdAt.toISOString(),
+        }))}
+      />
+
       <PdcaBoard
         programId={id}
         canManage={canManageActions}
@@ -213,6 +243,21 @@ export default async function ProgramWorkspacePage({
         selectedPackId={selectedPackId}
         evidenceDocs={evidenceDocs}
         coverage={coverage}
+      />
+
+      <MockPanel
+        programId={id}
+        canRun={can(tenant.role, "reviews.run")}
+        ssrDocs={ssrDocs}
+        latestRunId={latestPanel?.id ?? null}
+      />
+
+      <CrossMapper
+        programId={id}
+        packs={packs.map((p) => ({
+          id: p.id,
+          label: `${p.code} — ${ar && p.nameAr ? p.nameAr : p.nameEn}`,
+        }))}
       />
     </div>
   );

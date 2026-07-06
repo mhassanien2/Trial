@@ -287,8 +287,41 @@ async function seedProgramWorkspace(
     }
   }
 
+  // Historical readiness snapshots for the trendline (idempotent by source).
+  const ncaaaPack = await prisma.standardsPack.findFirst({
+    where: { code: "NCAAA-PROG-2022" },
+    select: { id: true },
+  });
+  if (ncaaaPack) {
+    const history: Array<[string, number, number]> = [
+      // [source, score, daysAgo]
+      ["seed:snapshot-1", 38, 180],
+      ["seed:snapshot-2", 47, 120],
+      ["seed:snapshot-3", 55, 60],
+      ["seed:snapshot-4", 62, 15],
+    ];
+    for (const [source, score, daysAgo] of history) {
+      const existing = await prisma.readinessSnapshot.findFirst({
+        where: { programId, source },
+        select: { id: true },
+      });
+      if (!existing) {
+        await prisma.readinessSnapshot.create({
+          data: {
+            institutionId,
+            programId,
+            packId: ncaaaPack.id,
+            score,
+            source,
+            createdAt: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
+    }
+  }
+
   console.log(
-    `  Workspace: ${planItems.length} plan items, evidence linked to ${teachingStd?.criteria.length ?? 0} criteria, ${actions.length} actions`
+    `  Workspace: ${planItems.length} plan items, evidence linked to ${teachingStd?.criteria.length ?? 0} criteria, ${actions.length} actions, 4 readiness snapshots`
   );
 }
 
