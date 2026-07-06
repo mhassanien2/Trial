@@ -45,26 +45,9 @@ services:
       - key: JOBS_RUN_SECRET
         generateValue: true
 
-  # Safety-net job runner: drains the DB-backed queue every minute.
-  # (Uploads also kick it in-process, so this just covers retries.)
-  - type: cron
-    name: accreditgenius-jobs
-    runtime: node
-    plan: free
-    branch: main
-    schedule: "* * * * *"
-    buildCommand: corepack enable && pnpm install --frozen-lockfile
-    startCommand: >-
-      curl -fsS -X POST "https://$APP_URL/api/jobs/run"
-      -H "Authorization: Bearer $JOBS_RUN_SECRET" || true
-    envVars:
-      - key: APP_URL
-        fromService:
-          type: web
-          name: accreditgenius
-          property: host
-      - key: JOBS_RUN_SECRET
-        fromService:
-          type: web
-          name: accreditgenius
-          envVarKey: JOBS_RUN_SECRET
+# Note: background jobs (ingestion, review, mock panel) run in-process —
+# uploads and review/panel requests kick the queue automatically, so no
+# always-on worker is needed on the free plan. To add a safety-net retry
+# later, point any external cron (e.g. cron-job.org, free) at:
+#   POST https://<your-app>/api/jobs/run
+#   Authorization: Bearer <JOBS_RUN_SECRET>   (see the service's env vars)
