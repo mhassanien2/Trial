@@ -1,0 +1,70 @@
+# Render Blueprint — one-click deploy for AccreditGenius.
+# In Render: New → Blueprint → connect this repo. Render reads this file,
+# creates the service, and prompts for the secret values marked sync:false.
+# The database migrates itself on every deploy (build runs `db:setup`).
+#
+# Pair with Cloudflare in front (proxied CNAME to the Render URL) for your
+# domain + CDN + SSL. See docs/CLOUDFLARE_WALKTHROUGH.md.
+services:
+  - type: web
+    name: accreditgenius
+    runtime: node
+    plan: free
+    branch: claude/accreditgenius-saas-build-y2kut8
+    # migrate (+ optional seed) then build
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm prisma generate && pnpm db:setup && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /en/login
+    autoDeploy: true
+    envVars:
+      # --- you paste these (Neon + R2) ---
+      - key: DATABASE_URL
+        sync: false # Neon pooled connection string
+      - key: S3_ENDPOINT
+        sync: false # https://<accountid>.r2.cloudflarestorage.com
+      - key: S3_BUCKET
+        sync: false # accreditgenius-uploads
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      # --- optional (AI features; leave blank to run in fallback mode) ---
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # --- set automatically ---
+      - key: STORAGE_DRIVER
+        value: s3
+      - key: S3_REGION
+        value: auto
+      - key: SEED_DEMO_DATA
+        value: "true" # loads the demo institution + data on first deploy
+      - key: AUTH_SECRET
+        generateValue: true # Render generates a strong secret for you
+      # AUTH_URL is not required: the app trusts the host header
+      # (trustHost). Optionally set it to your Cloudflare domain later.
+      - key: JOBS_RUN_SECRET
+        generateValue: true
+
+  # Safety-net job runner: drains the DB-backed queue every minute.
+  # (Uploads also kick it in-process, so this just covers retries.)
+  - type: cron
+    name: accreditgenius-jobs
+    runtime: node
+    plan: free
+    branch: claude/accreditgenius-saas-build-y2kut8
+    schedule: "* * * * *"
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: >-
+      curl -fsS -X POST "https://$APP_URL/api/jobs/run"
+      -H "Authorization: Bearer $JOBS_RUN_SECRET" || true
+    envVars:
+      - key: APP_URL
+        fromService:
+          type: web
+          name: accreditgenius
+          property: host
+      - key: JOBS_RUN_SECRET
+        fromService:
+          type: web
+          name: accreditgenius
+          envVarKey: JOBS_RUN_SECRET

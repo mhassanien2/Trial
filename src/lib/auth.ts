@@ -54,6 +54,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
+  // Trust the deployment host header so AUTH_URL need not be set manually
+  // on the hosting platform (Render/Cloudflare fill the host at runtime).
+  trustHost: true,
   providers,
   callbacks: {
     // Multi-tenant: no self-signup. Google sign-in is only allowed for
