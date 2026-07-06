@@ -41,3 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 uploads/
+test-results/
+playwright-report/
+tests/e2e/.artifacts/

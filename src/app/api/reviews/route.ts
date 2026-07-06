@@ -4,6 +4,7 @@ import { z } from "zod";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { enqueueJob, kickJobRunner } from "@/lib/jobs/queue";
+import { LIMITS, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { ForbiddenError } from "@/lib/rbac";
 import { requireTenantWith } from "@/lib/tenant";
 
@@ -18,6 +19,10 @@ const createSchema = z.object({
 export async function POST(req: Request) {
   try {
     const tenant = await requireTenantWith("reviews.run");
+
+    const rl = rateLimit(tenant.userId, "ai", LIMITS.ai);
+    if (!rl.ok) return tooManyRequests(rl);
+
     const body = createSchema.safeParse(await req.json());
     if (!body.success) {
       return NextResponse.json(

@@ -12,6 +12,7 @@ import {
 } from "@/lib/ai/prompts/template-fill";
 import { prisma } from "@/lib/db";
 import { hybridSearch } from "@/lib/rag/retrieval";
+import { LIMITS, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { ForbiddenError } from "@/lib/rbac";
 import { collectFields, templateSchemaSchema } from "@/lib/templates/schema";
 import { requireTenantWith } from "@/lib/tenant";
@@ -38,6 +39,10 @@ export async function POST(
   try {
     const { id } = await params;
     const tenant = await requireTenantWith("generator.use");
+
+    const rl = rateLimit(tenant.userId, "ai", LIMITS.ai);
+    if (!rl.ok) return tooManyRequests(rl);
+
     const body = bodySchema.safeParse(await req.json());
     if (!body.success) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });

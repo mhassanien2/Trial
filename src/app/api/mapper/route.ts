@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { logAudit } from "@/lib/audit";
 import { computeMapping } from "@/lib/mapper/engine";
+import { LIMITS, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { ForbiddenError } from "@/lib/rbac";
 import { requireTenantWith } from "@/lib/tenant";
 
@@ -20,6 +21,10 @@ const bodySchema = z.object({
 export async function POST(req: Request) {
   try {
     const tenant = await requireTenantWith("standards.view");
+
+    const rl = rateLimit(tenant.userId, "ai", LIMITS.ai);
+    if (!rl.ok) return tooManyRequests(rl);
+
     const body = bodySchema.safeParse(await req.json());
     if (!body.success) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });

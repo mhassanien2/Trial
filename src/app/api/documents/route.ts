@@ -7,6 +7,7 @@ import { z } from "zod";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { enqueueJob, kickJobRunner } from "@/lib/jobs/queue";
+import { LIMITS, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { ForbiddenError } from "@/lib/rbac";
 import { getStorage } from "@/lib/storage";
 import { requireTenantWith } from "@/lib/tenant";
@@ -44,6 +45,9 @@ const metaSchema = z.object({
 export async function POST(req: Request) {
   try {
     const tenant = await requireTenantWith("documents.upload");
+
+    const rl = rateLimit(tenant.userId, "upload", LIMITS.upload);
+    if (!rl.ok) return tooManyRequests(rl);
 
     const form = await req.formData();
     const file = form.get("file");

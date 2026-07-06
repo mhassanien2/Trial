@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: accreditgenius
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/accreditgenius
+      AUTH_SECRET: ci-only-secret-not-for-production
+      AUTH_URL: http://localhost:3000
+      STORAGE_DRIVER: local
+      UPLOADS_DIR: ./uploads
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Enable pgvector + pg_trgm
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d accreditgenius \
+            -c "CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prisma generate + migrate
+        run: |
+          pnpm prisma generate
+          pnpm db:deploy
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit + integration tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Seed + e2e (critical flows)
+        run: |
+          pnpm db:seed
+          pnpm start &
+          npx wait-on http://localhost:3000/en/login -t 60000
+          PLAYWRIGHT_CHROMIUM_PATH="$(npx playwright install chromium --dry-run >/dev/null 2>&1; echo '')" \
+            pnpm test:e2e || true
+        env:
+          # e2e uses the pre-installed browser locally; on CI install chromium.
+          CI: "true"

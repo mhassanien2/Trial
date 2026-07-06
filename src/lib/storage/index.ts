@@ -1,4 +1,5 @@
 import { LocalStorageProvider } from "./local";
+import { S3StorageProvider } from "./s3";
 
 /**
  * Storage abstraction. Dev uses the local filesystem under UPLOADS_DIR;
@@ -19,6 +20,9 @@ export function getStorage(): StorageProvider {
   switch (driver) {
     case "local":
       provider = new LocalStorageProvider(process.env.UPLOADS_DIR ?? "./uploads");
+      return provider;
+    case "s3":
+      provider = new S3StorageProvider();
       return provider;
     default:
       throw new Error(`Unknown STORAGE_DRIVER: ${driver}`);
