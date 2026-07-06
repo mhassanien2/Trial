@@ -18,6 +18,9 @@ import {
   DocumentKind,
   IngestStatus,
   PackOrigin,
+  PdcaPhase,
+  PlanItemStatus,
+  ActionStatus,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -181,6 +184,114 @@ async function seedSampleSSR(institutionId: string) {
   console.log(`  SSR: ${document.title} (${chunks.length} chunks ingested)`);
 }
 
+/**
+ * Seed a demo quality-cycle workspace for a program: PDCA plan items,
+ * an evidence file linked to two NCAAA criteria, and improvement actions.
+ */
+async function seedProgramWorkspace(
+  institutionId: string,
+  programId: string,
+  ownerId: string
+) {
+  const planItems: Array<[PdcaPhase, string, PlanItemStatus]> = [
+    [PdcaPhase.PLAN, "Prepare Self-Study Report (SSR)", PlanItemStatus.IN_PROGRESS],
+    [PdcaPhase.PLAN, "Update Program Specification (TP-151)", PlanItemStatus.PLANNED],
+    [PdcaPhase.DO, "Draft course specifications for core courses", PlanItemStatus.IN_PROGRESS],
+    [PdcaPhase.CHECK, "Run internal mock review against NCAAA", PlanItemStatus.PLANNED],
+    [PdcaPhase.ACT, "Close gaps from last review cycle", PlanItemStatus.PLANNED],
+  ];
+  for (const [phase, title, status] of planItems) {
+    const existing = await prisma.planItem.findFirst({
+      where: { programId, title },
+      select: { id: true },
+    });
+    if (!existing) {
+      await prisma.planItem.create({
+        data: { institutionId, programId, phase, title, status },
+      });
+    }
+  }
+
+  // Evidence document + links to two NCAAA program criteria.
+  const evId = "doc_evidence_demo";
+  const evKey = `${institutionId}/${evId}/Curriculum_Committee_Minutes.txt`;
+  fs.mkdirSync(path.join(__dirname, "..", "uploads", path.dirname(evKey)), {
+    recursive: true,
+  });
+  const evBuffer = Buffer.from(
+    "Curriculum Committee Minutes — approval of PLO/CLO mapping and assessment plan.\n",
+    "utf8"
+  );
+  fs.writeFileSync(path.join(__dirname, "..", "uploads", evKey), evBuffer);
+  await prisma.document.upsert({
+    where: { id: evId },
+    update: {},
+    create: {
+      id: evId,
+      institutionId,
+      programId,
+      kind: DocumentKind.EVIDENCE,
+      title: "Curriculum Committee Minutes",
+      language: DocLanguage.EN,
+      storageKey: evKey,
+      mimeType: "text/plain",
+      sizeBytes: evBuffer.length,
+      sha256: crypto.createHash("sha256").update(evBuffer).digest("hex"),
+      ingestStatus: IngestStatus.NOT_APPLICABLE,
+    },
+  });
+
+  const ncaaaProg = await prisma.standardsPack.findFirst({
+    where: { code: "NCAAA-PROG-2022" },
+    include: {
+      standards: {
+        orderBy: { sortOrder: "asc" },
+        include: { criteria: { orderBy: { sortOrder: "asc" }, take: 2 } },
+      },
+    },
+  });
+  const teachingStd = ncaaaProg?.standards.find((s) => s.code === "S3");
+  for (const criterion of teachingStd?.criteria ?? []) {
+    await prisma.evidenceLink.upsert({
+      where: {
+        documentId_criterionId_programId: {
+          documentId: evId,
+          criterionId: criterion.id,
+          programId,
+        },
+      },
+      update: {},
+      create: {
+        institutionId,
+        programId,
+        documentId: evId,
+        criterionId: criterion.id,
+        note: "Approved mapping and assessment plan",
+      },
+    });
+  }
+
+  const actions: Array<[string, ActionStatus]> = [
+    ["Document a formal risk register for the program", ActionStatus.OPEN],
+    ["Record staff professional-development participation systematically", ActionStatus.IN_PROGRESS],
+  ];
+  for (const [title, status] of actions) {
+    const existing = await prisma.improvementAction.findFirst({
+      where: { programId, title },
+      select: { id: true },
+    });
+    if (!existing) {
+      await prisma.improvementAction.create({
+        data: { institutionId, programId, title, status, ownerId },
+      });
+    }
+  }
+
+  console.log(
+    `  Workspace: ${planItems.length} plan items, evidence linked to ${teachingStd?.criteria.length ?? 0} criteria, ${actions.length} actions`
+  );
+}
+
 /** Load every pack JSON from /data/standards/{sa,eg} and upsert it. */
 async function seedStandardsPacks() {
   const base = path.join(__dirname, "..", "data", "standards");
@@ -214,11 +325,20 @@ async function seedStandardsPacks() {
       },
     });
 
-    // Replace the structure wholesale so re-seeding stays idempotent.
-    await prisma.standard.deleteMany({ where: { packId: pack.id } });
+    // Upsert standards/criteria in place (by code) so criterion IDs stay
+    // stable across re-seeds — evidence links, review findings and mappings
+    // that reference criteria are never broken by re-running the seed.
     for (const [i, std] of parsed.standards.entries()) {
-      await prisma.standard.create({
-        data: {
+      const standard = await prisma.standard.upsert({
+        where: { packId_code: { packId: pack.id, code: std.code } },
+        update: {
+          titleEn: std.titleEn,
+          titleAr: std.titleAr,
+          descriptionEn: std.descriptionEn,
+          descriptionAr: std.descriptionAr,
+          sortOrder: i,
+        },
+        create: {
           packId: pack.id,
           code: std.code,
           titleEn: std.titleEn,
@@ -226,33 +346,58 @@ async function seedStandardsPacks() {
           descriptionEn: std.descriptionEn,
           descriptionAr: std.descriptionAr,
           sortOrder: i,
-          criteria: {
-            create: std.criteria.map((c, j) => ({
-              code: c.code,
-              titleEn: c.titleEn,
-              titleAr: c.titleAr,
-              descriptionEn: c.descriptionEn,
-              descriptionAr: c.descriptionAr,
-              sortOrder: j,
-              indicators: {
-                create: c.indicators.map((ind, k) => ({
-                  code: ind.code,
-                  textEn: ind.textEn,
-                  textAr: ind.textAr,
-                  sortOrder: k,
-                })),
-              },
-              evidenceRequirements: {
-                create: c.evidenceRequirements.map((e, k) => ({
-                  textEn: e.textEn,
-                  textAr: e.textAr,
-                  sortOrder: k,
-                })),
-              },
-            })),
-          },
         },
       });
+
+      for (const [j, c] of std.criteria.entries()) {
+        const criterion = await prisma.criterion.upsert({
+          where: { standardId_code: { standardId: standard.id, code: c.code } },
+          update: {
+            titleEn: c.titleEn,
+            titleAr: c.titleAr,
+            descriptionEn: c.descriptionEn,
+            descriptionAr: c.descriptionAr,
+            sortOrder: j,
+          },
+          create: {
+            standardId: standard.id,
+            code: c.code,
+            titleEn: c.titleEn,
+            titleAr: c.titleAr,
+            descriptionEn: c.descriptionEn,
+            descriptionAr: c.descriptionAr,
+            sortOrder: j,
+          },
+        });
+
+        // Indicators / evidence requirements have no external references,
+        // so replace them wholesale to reflect the latest JSON.
+        await prisma.indicator.deleteMany({ where: { criterionId: criterion.id } });
+        await prisma.evidenceRequirement.deleteMany({
+          where: { criterionId: criterion.id },
+        });
+        if (c.indicators.length > 0) {
+          await prisma.indicator.createMany({
+            data: c.indicators.map((ind, k) => ({
+              criterionId: criterion.id,
+              code: ind.code,
+              textEn: ind.textEn,
+              textAr: ind.textAr,
+              sortOrder: k,
+            })),
+          });
+        }
+        if (c.evidenceRequirements.length > 0) {
+          await prisma.evidenceRequirement.createMany({
+            data: c.evidenceRequirements.map((e, k) => ({
+              criterionId: criterion.id,
+              textEn: e.textEn,
+              textAr: e.textAr,
+              sortOrder: k,
+            })),
+          });
+        }
+      }
     }
     console.log(`  Pack: ${parsed.code}@${parsed.version} (${parsed.standards.length} standards)`);
   }
@@ -358,6 +503,9 @@ async function main() {
 
   console.log("Demo SSR (ingested for AI Reviewer):");
   await seedSampleSSR(institution.id);
+
+  console.log("Program workspace (PDCA, evidence, actions):");
+  await seedProgramWorkspace(institution.id, pharmD.id, coordinator.id);
 
   console.log("Seed complete:");
   console.log(`  Institution: ${institution.nameEn} (${institution.id})`);

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", key: "dashboard", icon: LayoutDashboard, enabled: true },
-  { href: "/programs", key: "programs", icon: GraduationCap, enabled: false },
+  { href: "/programs", key: "programs", icon: GraduationCap, enabled: true },
   { href: "/standards", key: "standards", icon: BookOpenCheck, enabled: true },
   { href: "/documents", key: "documents", icon: FileText, enabled: true },
   { href: "/templates", key: "templates", icon: LayoutTemplate, enabled: true },
