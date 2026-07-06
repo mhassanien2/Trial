@@ -18,7 +18,7 @@
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "opennextjs-cloudflare build && wrangler dev",
     "cf:deploy": "opennextjs-cloudflare build && wrangler deploy",
-    "db:setup": "prisma migrate deploy && node scripts/maybe-seed.mjs"
+    "db:setup": "node scripts/db-setup.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
