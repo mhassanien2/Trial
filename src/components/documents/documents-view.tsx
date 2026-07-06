@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +33,7 @@ export function DocumentsView({ canUpload }: { canUpload: boolean }) {
   const t = useTranslations("documents");
   const [docs, setDocs] = useState<DocumentRow[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/documents");
@@ -43,23 +43,25 @@ export function DocumentsView({ canUpload }: { canUpload: boolean }) {
       setLoaded(true);
       // Keep polling while anything is still ingesting; also nudge the
       // job runner so queued work makes progress in dev.
-      const busy = json.documents.some((d) =>
+      const anyBusy = json.documents.some((d) =>
         ["PENDING", "PROCESSING"].includes(d.ingestStatus)
       );
-      if (timer.current) clearTimeout(timer.current);
-      if (busy) {
-        void fetch("/api/jobs/run", { method: "POST" });
-        timer.current = setTimeout(refresh, 3500);
-      }
+      setBusy(anyBusy);
+      if (anyBusy) void fetch("/api/jobs/run", { method: "POST" });
     }
   }, []);
 
   useEffect(() => {
+    // setState happens only after the fetch resolves, not synchronously.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh();
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
   }, [refresh]);
+
+  useEffect(() => {
+    if (!busy) return;
+    const id = setInterval(() => void refresh(), 3500);
+    return () => clearInterval(id);
+  }, [busy, refresh]);
 
   return (
     <div className="space-y-4">

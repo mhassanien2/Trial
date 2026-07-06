@@ -164,10 +164,21 @@ export async function hybridSearch(opts: {
     }
   });
 
-  const chunks = [...fused.values()]
+  const chunks: RetrievedChunk[] = [...fused.values()]
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map(({ vRank: _v, kRank: _k, ...rest }) => rest);
+    .map((c) => ({
+      chunkId: c.chunkId,
+      documentId: c.documentId,
+      documentTitle: c.documentTitle,
+      page: c.page,
+      headingPath: c.headingPath,
+      criterionCode: c.criterionCode,
+      content: c.content,
+      score: c.score,
+      vectorSimilarity: c.vectorSimilarity,
+      keywordRank: c.keywordRank,
+    }));
 
   // Confidence: a keyword hit matching at least two distinct significant
   // query terms, or a single-term query with a hit, or solid vector
