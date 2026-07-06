@@ -98,3 +98,69 @@
     font-family: var(--font-arabic);
   }
 }
+
+/* ── Print / PDF view for generated documents ── */
+.print-root {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  color: #000;
+  padding: 1rem;
+}
+.print-root .doc-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.5rem;
+}
+.print-root .doc-section {
+  margin-bottom: 1.25rem;
+  break-inside: avoid;
+}
+.print-root .doc-section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0.75rem 0 0.5rem;
+}
+.print-root p {
+  margin: 0.35rem 0;
+  line-height: 1.5;
+}
+.print-root p.bold {
+  font-weight: 600;
+}
+.print-root .doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+}
+.print-root .doc-table td {
+  border: 1px solid #555;
+  padding: 0.4rem 0.6rem;
+  vertical-align: top;
+}
+.print-root .requires {
+  color: #b00020;
+  font-style: italic;
+}
+[dir="rtl"] .print-root {
+  text-align: right;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  aside,
+  header {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  .print-root {
+    max-width: none;
+  }
+}

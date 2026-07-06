@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Download, Plus, Printer, Sparkles, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
@@ -163,6 +163,12 @@ export function DocumentWizard({
             <a href={`/api/generated/${docId}/export`}>
               <Download />
               {t("exportDocx")}
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a href={`/${locale}/generated/${docId}/print`} target="_blank" rel="noopener">
+              <Printer />
+              {t("printView")}
             </a>
           </Button>
         </div>
