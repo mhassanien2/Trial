@@ -49,14 +49,20 @@ A ready `S3StorageProvider` can be added behind the existing
 `StorageProvider` interface in `src/lib/storage/` — the interface already
 abstracts `put/get/delete/exists`, so only that one file changes.
 
-### 3. Add the OpenNext + Wrangler tooling
+### 3. OpenNext + Wrangler tooling (already wired)
 
-```bash
-pnpm add -D @opennextjs/cloudflare wrangler
-```
+`@opennextjs/cloudflare` and `wrangler` are dev dependencies, and
+`wrangler.jsonc` + `open-next.config.ts` are in the repo root. The
+Cloudflare Worker bundle builds successfully (`pnpm cf:build` →
+`.open-next/worker.js`).
 
-`wrangler.jsonc` and `open-next.config.ts` are already in the repo root.
-Review `wrangler.jsonc` bindings (R2 bucket name, compatibility date).
+> **Edge-compatible by design.** Next 16's `proxy` (middleware) only runs
+> on the Node.js runtime, which Cloudflare Workers reject. This app
+> therefore ships **no middleware**: locale routing is handled by the
+> `[locale]` segment + a root redirect (`src/app/page.tsx`), and auth is
+> enforced authoritatively server-side in every page/route via
+> `requireTenant` / `requireTenantWith`. Nothing about security depends on
+> an edge pre-gate.
 
 ### 4. Configure secrets
 
@@ -78,14 +84,16 @@ or via `wrangler secret put`:
 ### 5. Build & deploy
 
 ```bash
-pnpm dlx @opennextjs/cloudflare build
-pnpm dlx wrangler deploy
+pnpm cf:build      # opennextjs-cloudflare build  → .open-next/worker.js
+pnpm cf:deploy     # build + wrangler deploy       (needs CLOUDFLARE_API_TOKEN)
+# local preview on workerd:
+pnpm cf:preview    # build + wrangler dev
 ```
 
 Or connect the GitHub repo in the Cloudflare dashboard (Workers & Pages →
-Create → connect to Git) with build command
-`pnpm dlx @opennextjs/cloudflare build` and deploy command
-`pnpm dlx wrangler deploy` — every push to the deployment branch ships.
+Create → connect to Git) with build command `pnpm cf:build` and deploy
+command `pnpm exec wrangler deploy` — every push to the deployment branch
+ships.
 
 ### 6. Run background jobs on a schedule
 

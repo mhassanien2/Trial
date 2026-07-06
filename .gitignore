@@ -44,3 +44,7 @@ uploads/
 test-results/
 playwright-report/
 tests/e2e/.artifacts/
+
+# Cloudflare / OpenNext build output
+.open-next/
+.wrangler/
