@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { href: "/standards", key: "standards", icon: BookOpenCheck, enabled: true },
   { href: "/documents", key: "documents", icon: FileText, enabled: true },
   { href: "/templates", key: "templates", icon: LayoutTemplate, enabled: true },
-  { href: "/reviews", key: "reviews", icon: ClipboardCheck, enabled: false },
+  { href: "/reviews", key: "reviews", icon: ClipboardCheck, enabled: true },
   { href: "/evidence", key: "evidence", icon: FolderCheck, enabled: false },
 ] as const;
 

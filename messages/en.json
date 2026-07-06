@@ -148,6 +148,46 @@
     "removeRow": "Remove",
     "requiresInputNote": "Empty fields export as [REQUIRES INPUT] — nothing is ever invented."
   },
+  "reviews": {
+    "title": "AI Reviewer",
+    "subtitle": "Rubric-based compliance review of a completed document against a standards pack",
+    "newReview": "New review",
+    "document": "Document to review",
+    "pack": "Standards pack",
+    "program": "Program (optional)",
+    "noProgram": "— none —",
+    "run": "Run review",
+    "running": "Reviewing…",
+    "noReadyDocs": "No ingested documents available. Upload a completed document (SSR, course spec, report) as \"Document for AI review\" first.",
+    "empty": "No reviews yet.",
+    "status": "Status",
+    "score": "Readiness",
+    "created": "Created",
+    "view": "View",
+    "statuses": {
+      "PENDING": "Queued",
+      "RUNNING": "Running",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed"
+    },
+    "readinessScore": "Readiness score",
+    "outOf": "/ 100",
+    "exportReport": "Export report (DOCX)",
+    "findings": "Findings by criterion",
+    "verdict": "Verdict",
+    "criterion": "Criterion",
+    "citations": "Citations",
+    "recommendations": "Recommendations",
+    "noCitations": "No supporting evidence found in the document.",
+    "verdicts": {
+      "MET": "Met",
+      "PARTIALLY_MET": "Partially Met",
+      "NOT_MET": "Not Met",
+      "NOT_EVALUATED": "Not Evaluated"
+    },
+    "processing": "Review is running — this page will update automatically.",
+    "failed": "Review failed"
+  },
   "common": {
     "language": "Language",
     "english": "English",

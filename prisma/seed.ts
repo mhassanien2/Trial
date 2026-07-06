@@ -24,6 +24,13 @@ import bcrypt from "bcryptjs";
 import { standardsPackFileSchema } from "../src/lib/standards/schema";
 import { parseDocxTemplate } from "../src/lib/templates/parser";
 import { buildCourseSpecTemplate } from "../tests/fixtures/course-spec-template";
+import { buildSampleSSR } from "../tests/fixtures/sample-ssr";
+import { extractText } from "../src/lib/ingest/extract";
+import { chunkPages } from "../src/lib/ingest/chunk";
+import { embedTexts } from "../src/lib/ai/embeddings";
+
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 const prisma = new PrismaClient();
 
@@ -107,6 +114,71 @@ async function seedDemoTemplate(institutionId: string, programId: string) {
   console.log(
     `  Template: ${template.name} (${schema.sections.length} sections, ${fieldCount} fields)`
   );
+}
+
+/**
+ * Seed a completed PharmD SSR as a REVIEW_SUBJECT and run it through the
+ * ingestion steps (extract → chunk → embed → pgvector) so the AI Reviewer
+ * has a demo-ready, retrievable document out of the box.
+ */
+async function seedSampleSSR(institutionId: string) {
+  const buffer = await buildSampleSSR();
+  const docId = "doc_ssr_pharmd";
+  const storageKey = `${institutionId}/${docId}/PharmD_Self_Study_Report.docx`;
+  fs.mkdirSync(path.join(__dirname, "..", "uploads", path.dirname(storageKey)), {
+    recursive: true,
+  });
+  fs.writeFileSync(path.join(__dirname, "..", "uploads", storageKey), buffer);
+
+  const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
+  const document = await prisma.document.upsert({
+    where: { id: docId },
+    update: {},
+    create: {
+      id: docId,
+      institutionId,
+      kind: DocumentKind.REVIEW_SUBJECT,
+      title: "PharmD Self-Study Report (SSR)",
+      language: DocLanguage.EN,
+      storageKey,
+      mimeType: DOCX_MIME,
+      sizeBytes: buffer.length,
+      sha256,
+      ingestStatus: IngestStatus.PROCESSING,
+    },
+  });
+
+  const { pages, pageCount } = await extractText(buffer, DOCX_MIME);
+  const chunks = chunkPages(pages);
+  await prisma.documentChunk.deleteMany({ where: { documentId: document.id } });
+
+  const embeddings = await embedTexts(chunks.map((c) => c.content));
+  for (let i = 0; i < chunks.length; i++) {
+    const c = chunks[i];
+    const vector = `[${embeddings[i].join(",")}]`;
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO "DocumentChunk"
+        (id, "documentId", "chunkIndex", content, embedding, page,
+         "headingPath", "criterionCode", "tokenCount", metadata)
+       VALUES ($1,$2,$3,$4,$5::vector,$6,$7,$8,$9,'{}'::jsonb)`,
+      crypto.randomUUID(),
+      document.id,
+      i,
+      c.content,
+      vector,
+      c.page,
+      c.headingPath,
+      c.criterionCode,
+      Math.ceil(c.content.length / 4)
+    );
+  }
+
+  await prisma.document.update({
+    where: { id: document.id },
+    data: { ingestStatus: IngestStatus.READY, pageCount },
+  });
+
+  console.log(`  SSR: ${document.title} (${chunks.length} chunks ingested)`);
 }
 
 /** Load every pack JSON from /data/standards/{sa,eg} and upsert it. */
@@ -283,6 +355,9 @@ async function main() {
 
   console.log("Demo template:");
   await seedDemoTemplate(institution.id, pharmD.id);
+
+  console.log("Demo SSR (ingested for AI Reviewer):");
+  await seedSampleSSR(institution.id);
 
   console.log("Seed complete:");
   console.log(`  Institution: ${institution.nameEn} (${institution.id})`);

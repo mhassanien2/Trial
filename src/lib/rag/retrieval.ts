@@ -26,6 +26,17 @@ export interface HybridSearchResult {
 const CANDIDATES = 24;
 const RRF_K = 60;
 
+// Common EN/AR stopwords excluded from keyword matching so they never
+// inflate the "terms matched" coverage signal.
+const STOPWORDS = new Set([
+  "the", "and", "for", "are", "with", "that", "this", "from", "has", "have",
+  "was", "were", "will", "not", "any", "all", "its", "their", "them", "which",
+  "what", "when", "where", "who", "how", "why", "does", "did", "can", "may",
+  "into", "onto", "per", "via", "our", "your", "his", "her", "each", "such",
+  "من", "في", "على", "إلى", "عن", "هذا", "هذه", "التي", "الذي", "ما", "هل",
+  "أو", "و", "مع", "كل", "بين", "عند", "قد", "به", "لل", "الى",
+]);
+
 /**
  * Hybrid retrieval: pgvector cosine + tsvector keyword search, fused with
  * reciprocal rank fusion, always scoped to the institution's documents
@@ -80,13 +91,16 @@ export async function hybridSearch(opts: {
   // OR-join significant terms: websearch_to_tsquery ANDs every word
   // (including stopwords like "what"/"ما"), which zeroes out recall for
   // natural-language questions. Ranking still rewards multi-term matches.
+  // Stopwords are dropped so a common word ("and", "the") never counts as
+  // a match when gauging whether the query's theme is actually covered.
   const terms = [
     ...new Set(
       opts.query
         .normalize("NFKC")
+        .toLowerCase()
         .split(/[^\p{L}\p{N}-]+/u)
-        .filter((w) => w.length >= 3)
         .map((w) => w.replace(/'/g, ""))
+        .filter((w) => w.length >= 3 && !STOPWORDS.has(w))
     ),
   ].slice(0, 16);
   const tsQuery = terms.join(" | ");
