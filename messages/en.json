@@ -110,7 +110,43 @@
       "PROCESSING": "Processing",
       "READY": "Ready",
       "FAILED": "Failed"
-    }
+    },
+    "formCodeField": "Form code (for templates)"
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Upload official DOCX templates; each becomes a guided form and a faithful export",
+    "upload": "Upload template (DOCX)",
+    "formCode": "Form code",
+    "name": "Template",
+    "version": "Version",
+    "generatedCount": "Documents",
+    "empty": "No templates yet. Upload an official DOCX template (e.g. TP-153 Course Specification).",
+    "newDocument": "New document from template",
+    "selectTemplate": "Template",
+    "selectProgram": "Program",
+    "documentTitle": "Document title",
+    "create": "Create",
+    "creating": "Creating…",
+    "parsing": "Parsing template…"
+  },
+  "wizard": {
+    "title": "Document editor",
+    "template": "Template",
+    "program": "Program",
+    "sections": "Sections",
+    "save": "Save draft",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "exportDocx": "Export DOCX",
+    "printView": "Print / PDF view",
+    "suggest": "Suggest with AI",
+    "suggesting": "Drafting…",
+    "aiDisabledTooltip": "Set ANTHROPIC_API_KEY to enable AI drafting",
+    "notEnoughInfo": "Not enough context in your ingested documents to draft this field — fill it manually.",
+    "addRow": "Add row",
+    "removeRow": "Remove",
+    "requiresInputNote": "Empty fields export as [REQUIRES INPUT] — nothing is ever invented."
   },
   "common": {
     "language": "Language",

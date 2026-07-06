@@ -110,7 +110,43 @@
       "PROCESSING": "قيد المعالجة",
       "READY": "جاهزة",
       "FAILED": "فشلت"
-    }
+    },
+    "formCodeField": "كود النموذج (للنماذج)"
+  },
+  "templates": {
+    "title": "النماذج",
+    "subtitle": "ارفع النماذج الرسمية بصيغة DOCX؛ يتحول كل نموذج إلى استمارة موجهة وتصدير مطابق",
+    "upload": "رفع نموذج (DOCX)",
+    "formCode": "كود النموذج",
+    "name": "النموذج",
+    "version": "الإصدار",
+    "generatedCount": "الوثائق",
+    "empty": "لا توجد نماذج بعد. ارفع نموذجاً رسمياً بصيغة DOCX (مثل توصيف المقرر TP-153).",
+    "newDocument": "وثيقة جديدة من نموذج",
+    "selectTemplate": "النموذج",
+    "selectProgram": "البرنامج",
+    "documentTitle": "عنوان الوثيقة",
+    "create": "إنشاء",
+    "creating": "جارٍ الإنشاء…",
+    "parsing": "جارٍ تحليل النموذج…"
+  },
+  "wizard": {
+    "title": "محرر الوثيقة",
+    "template": "النموذج",
+    "program": "البرنامج",
+    "sections": "الأقسام",
+    "save": "حفظ المسودة",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم الحفظ",
+    "exportDocx": "تصدير DOCX",
+    "printView": "عرض الطباعة / PDF",
+    "suggest": "اقتراح بالذكاء الاصطناعي",
+    "suggesting": "جارٍ الصياغة…",
+    "aiDisabledTooltip": "أضف مفتاح ANTHROPIC_API_KEY لتفعيل الصياغة الذكية",
+    "notEnoughInfo": "لا يوجد سياق كافٍ في وثائقك المعالجة لصياغة هذا الحقل — يرجى تعبئته يدوياً.",
+    "addRow": "إضافة صف",
+    "removeRow": "حذف",
+    "requiresInputNote": "الحقول الفارغة تُصدَّر بعلامة [REQUIRES INPUT] — لا يُختلق أي محتوى أبداً."
   },
   "common": {
     "language": "اللغة",

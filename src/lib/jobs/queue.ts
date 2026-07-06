@@ -4,12 +4,14 @@ import { JobStatus, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
 import { ingestDocumentHandler } from "./handlers/ingest-document";
+import { parseTemplateHandler } from "./handlers/parse-template";
 
 export type JobHandler = (payload: unknown, jobId: string) => Promise<void>;
 
 /** Registry of job types → handlers. Extend in later phases. */
 const HANDLERS: Record<string, JobHandler> = {
   ingest_document: ingestDocumentHandler,
+  parse_template: parseTemplateHandler,
 };
 
 export async function enqueueJob(

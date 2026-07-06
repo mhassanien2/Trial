@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 
 const KINDS = [
   "STANDARDS_SOURCE",
+  "TEMPLATE_SOURCE",
   "REVIEW_SUBJECT",
   "EVIDENCE",
   "OTHER",
@@ -102,6 +103,10 @@ export function UploadDocumentDialog({
           <div className="space-y-2">
             <Label htmlFor="country">{t("countryField")}</Label>
             <Input id="country" name="country" maxLength={2} placeholder="SA" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="formCode">{t("formCodeField")}</Label>
+            <Input id="formCode" name="formCode" maxLength={30} placeholder="TP-153" />
           </div>
           {error ? (
             <p role="alert" className="text-sm text-destructive sm:col-span-2">

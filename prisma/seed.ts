@@ -6,17 +6,108 @@
  * Run with: pnpm db:seed
  * Demo password for all users: Demo1234!
  */
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import { PrismaClient, Role, DegreeLevel, PackOrigin } from "@prisma/client";
+import {
+  PrismaClient,
+  Role,
+  DegreeLevel,
+  DocLanguage,
+  DocumentKind,
+  IngestStatus,
+  PackOrigin,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { standardsPackFileSchema } from "../src/lib/standards/schema";
+import { parseDocxTemplate } from "../src/lib/templates/parser";
+import { buildCourseSpecTemplate } from "../tests/fixtures/course-spec-template";
 
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "Demo1234!";
+
+/**
+ * Seed a demo NCAAA-style Course Specification (TP-153) template so the
+ * generator is demo-ready: build the DOCX, store it, parse it into a
+ * Template schema, then create one sample generated course spec.
+ */
+async function seedDemoTemplate(institutionId: string, programId: string) {
+  const buffer = await buildCourseSpecTemplate();
+  const docId = "doc_tpl_coursespec";
+  const storageKey = `${institutionId}/${docId}/TP-153_Course_Specification.docx`;
+  const uploadsDir = path.join(__dirname, "..", "uploads", path.dirname(storageKey));
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  fs.writeFileSync(path.join(__dirname, "..", "uploads", storageKey), buffer);
+
+  const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
+  const document = await prisma.document.upsert({
+    where: { id: docId },
+    update: {},
+    create: {
+      id: docId,
+      institutionId,
+      kind: DocumentKind.TEMPLATE_SOURCE,
+      title: "Course Specification (TP-153)",
+      language: DocLanguage.EN,
+      storageKey,
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      sizeBytes: buffer.length,
+      sha256,
+      metadata: { formCode: "TP-153" },
+      ingestStatus: IngestStatus.READY,
+    },
+  });
+
+  const schema = await parseDocxTemplate(buffer, {
+    title: "Course Specification (TP-153)",
+    language: "EN",
+  });
+
+  const template = await prisma.template.upsert({
+    where: { sourceDocumentId: document.id },
+    update: { schemaJson: schema },
+    create: {
+      institutionId,
+      sourceDocumentId: document.id,
+      name: "Course Specification (TP-153)",
+      formCode: "TP-153",
+      language: DocLanguage.EN,
+      schemaJson: schema,
+    },
+  });
+
+  await prisma.generatedDocument.upsert({
+    where: { id: "gen_demo_coursespec" },
+    update: {},
+    create: {
+      id: "gen_demo_coursespec",
+      institutionId,
+      programId,
+      templateId: template.id,
+      title: "PHT-415 Clinical Pharmacokinetics — Course Specification",
+      language: DocLanguage.EN,
+    },
+  });
+
+  const fieldCount = schema.sections
+    .flatMap((s) => s.blocks)
+    .reduce(
+      (n, b) =>
+        n +
+        (b.kind === "field" ? 1 : 0) +
+        (b.kind === "table"
+          ? b.rows.flatMap((r) => r.cells).filter((c) => c.field).length
+          : 0),
+      0
+    );
+  console.log(
+    `  Template: ${template.name} (${schema.sections.length} sections, ${fieldCount} fields)`
+  );
+}
 
 /** Load every pack JSON from /data/standards/{sa,eg} and upsert it. */
 async function seedStandardsPacks() {
@@ -189,6 +280,9 @@ async function main() {
 
   console.log("Standards packs:");
   await seedStandardsPacks();
+
+  console.log("Demo template:");
+  await seedDemoTemplate(institution.id, pharmD.id);
 
   console.log("Seed complete:");
   console.log(`  Institution: ${institution.nameEn} (${institution.id})`);

@@ -19,7 +19,7 @@ const NAV_ITEMS = [
   { href: "/programs", key: "programs", icon: GraduationCap, enabled: false },
   { href: "/standards", key: "standards", icon: BookOpenCheck, enabled: true },
   { href: "/documents", key: "documents", icon: FileText, enabled: true },
-  { href: "/templates", key: "templates", icon: LayoutTemplate, enabled: false },
+  { href: "/templates", key: "templates", icon: LayoutTemplate, enabled: true },
   { href: "/reviews", key: "reviews", icon: ClipboardCheck, enabled: false },
   { href: "/evidence", key: "evidence", icon: FolderCheck, enabled: false },
 ] as const;

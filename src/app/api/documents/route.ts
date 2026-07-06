@@ -37,6 +37,8 @@ const metaSchema = z.object({
   // For STANDARDS_SOURCE uploads: create a custom pack around the doc.
   packName: z.string().max(200).optional(),
   country: z.string().length(2).optional(),
+  // For TEMPLATE_SOURCE uploads: official form code, e.g. "TP-153".
+  formCode: z.string().max(30).optional(),
 });
 
 export async function POST(req: Request) {
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
       programId: form.get("programId") || undefined,
       packName: form.get("packName") || undefined,
       country: form.get("country") || undefined,
+      formCode: form.get("formCode") || undefined,
     });
     if (!meta.success) {
       return NextResponse.json(
@@ -92,6 +95,7 @@ export async function POST(req: Request) {
     const storageKey = `${tenant.institutionId}/${docId}/${safeName}`;
     await getStorage().put(storageKey, buffer, file.type);
 
+    const isTemplate = meta.data.kind === DocumentKind.TEMPLATE_SOURCE;
     const ingestable = INGESTABLE.has(meta.data.kind);
     const document = await prisma.document.create({
       data: {
@@ -106,7 +110,9 @@ export async function POST(req: Request) {
         mimeType: file.type,
         sizeBytes: file.size,
         sha256,
-        ingestStatus: ingestable ? IngestStatus.PENDING : IngestStatus.NOT_APPLICABLE,
+        metadata: meta.data.formCode ? { formCode: meta.data.formCode } : {},
+        ingestStatus:
+          ingestable || isTemplate ? IngestStatus.PENDING : IngestStatus.NOT_APPLICABLE,
       },
     });
 
@@ -127,7 +133,10 @@ export async function POST(req: Request) {
       packId = pack.id;
     }
 
-    if (ingestable) {
+    if (isTemplate) {
+      await enqueueJob("parse_template", { documentId: document.id }, tenant.institutionId);
+      kickJobRunner();
+    } else if (ingestable) {
       await enqueueJob("ingest_document", { documentId: document.id }, tenant.institutionId);
       kickJobRunner();
     }
