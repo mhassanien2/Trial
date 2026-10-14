@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Generated deploy output (Cloudflare / OpenNext):
     ".open-next/**",
     ".wrangler/**",
+    // LifeWise AI is a separate sub-project with its own toolchain (see lifewise/README.md):
+    "lifewise/**",
   ]),
 ]);
 

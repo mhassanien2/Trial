@@ -1,0 +1,429 @@
+// LifeWise AI — Phase 1 data model (draft). See docs/ARCHITECTURE.md for the ERD.
+// Ownership rule: every user-owned row carries userId and every query must filter by it
+// (enforced in the data-access layer, never by the frontend).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Sex {
+  male
+  female
+  not_specified
+}
+
+enum ActivityLevel {
+  sedentary
+  light
+  moderate
+  very_active
+  extra_active
+}
+
+enum WellnessGoalType {
+  maintain
+  lose
+  gain
+  nutritional_improvement
+}
+
+enum ConsentType {
+  terms
+  privacy
+  health_data_processing
+  health_conditions_and_medications
+  ai_processing
+  email_notifications
+}
+
+enum AiFeature {
+  meal_planning
+  lifestyle_coach
+  weekly_insights
+  substitutions
+  goal_refinement
+}
+
+enum MeasurementUnit {
+  metric
+  imperial
+}
+
+enum NotificationChannel {
+  in_app
+  email
+}
+
+enum Language {
+  en
+  ar
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String?
+  displayName   String?
+  locale        Language @default(en)
+  timezone      String   @default("UTC")
+  deletedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile          UserProfile?
+  consents         ConsentRecord[]
+  goals            WellnessGoal[]
+  bodyMeasurements BodyMeasurement[]
+  energyEstimates  EnergyEstimate[]
+  mealPlans        MealPlan[]
+  foodLogs         FoodLog[]
+  recipes          Recipe[]
+  exercisePlans    ExercisePlan[]
+  exerciseLogs     ExerciseLog[]
+  sleepLogs        SleepLog[]
+  hydrationLogs    HydrationLog[]
+  habits           Habit[]
+  aiConversations  AiConversation[]
+  notifications    Notification[]
+  progressReports  ProgressReport[]
+  auditEvents      AuditEvent[]
+}
+
+model UserProfile {
+  id                   String        @id @default(cuid())
+  userId               String        @unique
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth          DateTime?     @db.Date
+  sex                  Sex?          // null = not provided. Triggers non-calculated pathway.
+  heightCm             Decimal?      @db.Decimal(5, 1)
+  unitPreference       MeasurementUnit @default(metric)
+  activityLevel        ActivityLevel?
+  occupationPattern    String?
+  typicalSleepHours    Decimal?      @db.Decimal(3, 1)
+  dietaryPreferences   String[]      @default([])
+  allergies            String[]      @default([])
+  fitnessExperience    String?
+  availableExerciseMin Int?
+  // Sensitive. Only populated after health_conditions_and_medications consent.
+  // Field-level encryption at rest is planned (see ARCHITECTURE.md, Security).
+  healthConditions     String[]      @default([])
+  medications          String[]      @default([])
+  pregnantOrLactating  Boolean       @default(false)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+}
+
+model ConsentRecord {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        ConsentType
+  granted     Boolean
+  policyVersion String
+  recordedAt  DateTime    @default(now())
+
+  @@index([userId, type, recordedAt])
+}
+
+model WellnessGoal {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        WellnessGoalType
+  targetWeightKg Decimal?      @db.Decimal(5, 1)
+  startDate   DateTime         @db.Date
+  endDate     DateTime?        @db.Date
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([userId, active])
+}
+
+model BodyMeasurement {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  measuredAt      DateTime
+  weightKg        Decimal  @db.Decimal(5, 2)
+  heightCm        Decimal? @db.Decimal(5, 1)
+  waistCm         Decimal? @db.Decimal(5, 1)
+  bodyFatPercent  Decimal? @db.Decimal(4, 1) // user-entered only, never estimated by the app
+  bmi             Decimal? @db.Decimal(4, 1) // stored for history. Recomputed by the engine on read.
+  createdAt       DateTime @default(now())
+
+  @@index([userId, measuredAt])
+}
+
+model EnergyEstimate {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calcVersion     String
+  rmrKcal         Int
+  maintenanceKcal Int
+  targetKcal      Int
+  goal            WellnessGoalType
+  inputsSnapshot  Json     // inputs used, for auditability
+  requiresClinicianReview Boolean @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Food {
+  id          String   @id @default(cuid())
+  name        String
+  nameAr      String?
+  source      String   // provenance: e.g. "USDA FoodData Central", "user", "seed-fictional"
+  sourceRef   String?  // identifier in the source dataset
+  servingG    Decimal  @db.Decimal(7, 2)
+  allergens   String[] @default([])
+  dietTags    String[] @default([])
+  isFictionalSeed Boolean @default(false)
+  createdByUserId String?
+  createdAt   DateTime @default(now())
+
+  nutrients FoodNutrient[]
+  recipeIngredients RecipeIngredient[]
+  foodLogs  FoodLog[]
+
+  @@index([name])
+}
+
+model FoodNutrient {
+  id        String  @id @default(cuid())
+  foodId    String
+  food      Food    @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  kcal      Decimal @db.Decimal(7, 2)
+  proteinG  Decimal @db.Decimal(7, 2)
+  carbsG    Decimal @db.Decimal(7, 2)
+  fatG      Decimal @db.Decimal(7, 2)
+  fiberG    Decimal @db.Decimal(7, 2)
+
+  @@unique([foodId])
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  userId       String?  // null = system recipe
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  titleAr      String?
+  cuisine      String?
+  instructions String
+  prepMinutes  Int?
+  servings     Int      @default(1)
+  createdAt    DateTime @default(now())
+
+  ingredients RecipeIngredient[]
+  plannedMeals PlannedMeal[]
+}
+
+model RecipeIngredient {
+  id       String  @id @default(cuid())
+  recipeId String
+  recipe   Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  foodId   String
+  food     Food    @relation(fields: [foodId], references: [id])
+  grams    Decimal @db.Decimal(7, 2)
+
+  @@unique([recipeId, foodId])
+}
+
+model MealPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate DateTime @db.Date
+  days      Int      @default(7)
+  dietPattern String
+  targetKcal  Int
+  status    String   @default("draft") // draft | active | archived
+  generatedBy String @default("rules") // rules | ai (AI output is validated before saving)
+  createdAt DateTime @default(now())
+
+  meals PlannedMeal[]
+
+  @@index([userId, startDate])
+}
+
+model PlannedMeal {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  date       DateTime @db.Date
+  slot       String   // breakfast | lunch | dinner | snack
+  recipeId   String?
+  recipe     Recipe?  @relation(fields: [recipeId], references: [id])
+  completed  Boolean  @default(false)
+
+  @@index([mealPlanId, date])
+}
+
+model FoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodId    String
+  food      Food     @relation(fields: [foodId], references: [id])
+  loggedAt  DateTime
+  servings  Decimal  @db.Decimal(6, 2)
+  // Client-supplied key used to make retried submissions idempotent (duplicate-log protection).
+  clientKey String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, clientKey])
+  @@index([userId, loggedAt])
+}
+
+model ExercisePlan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  weeklyMinutes Int
+  experience String
+  content   Json     // structured sessions; validated against the exercise schema on write
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  logs ExerciseLog[]
+
+  @@index([userId, active])
+}
+
+model ExerciseLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId    String?
+  plan      ExercisePlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  activity  String
+  durationMin Int
+  steps     Int?     // manual step entry
+  loggedAt  DateTime
+  clientKey String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, clientKey])
+  @@index([userId, loggedAt])
+}
+
+model SleepLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logDate    DateTime @db.Date
+  bedtime    String   // HH:mm, local to the user's timezone at the time of logging
+  wakeTime   String
+  durationMin Int
+  quality    Int?     // subjective 1-5
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, logDate])
+}
+
+model HydrationLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loggedAt  DateTime
+  amountMl  Int
+  beverage  String   @default("water")
+  clientKey String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, clientKey])
+  @@index([userId, loggedAt])
+}
+
+model Habit {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  category    String   // walking | meals | sleep | mindfulness | screen | breaks | hydration | sedentary
+  targetPerWeek Int    @default(7)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  logs HabitLog[]
+
+  @@index([userId, active])
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId    String   // denormalised for row-level isolation checks
+  logDate   DateTime @db.Date
+  completed Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, logDate])
+  @@index([userId, logDate])
+}
+
+model AiConversation {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feature   AiFeature
+  language  Language  @default(en)
+  // Stored as text only, after safety validation. Raw provider payloads are not stored.
+  messages  Json
+  tokensIn  Int       @default(0)
+  tokensOut Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String              @id @default(cuid())
+  userId    String
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel   NotificationChannel
+  title     String
+  body      String
+  scheduledFor DateTime
+  sentAt    DateTime?
+  readAt    DateTime?
+  createdAt DateTime            @default(now())
+
+  @@index([userId, scheduledFor])
+}
+
+model ProgressReport {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  periodStart DateTime @db.Date
+  periodEnd   DateTime @db.Date
+  kind        String   // weekly | monthly
+  summary     Json     // deterministic metrics; AI narrative stored separately if enabled
+  createdAt   DateTime @default(now())
+
+  @@index([userId, periodStart])
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // e.g. "profile.read", "consent.withdraw", "account.export"
+  entity    String?
+  entityId  String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}

@@ -33,6 +33,7 @@
   "exclude": [
     "node_modules",
     "open-next.config.ts",
-    "tests/e2e/**"
+    "tests/e2e/**",
+    "lifewise"
   ]
 }

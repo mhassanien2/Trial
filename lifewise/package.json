@@ -1,0 +1,21 @@
+{
+  "name": "lifewise-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LifeWise AI: bilingual adult wellness platform. Calculation engine and domain core (Phase 1-3 foundation).",
+  "type": "module",
+  "scripts": {
+    "test": "node --import tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.19.3",
+    "@types/node": "^22.0.0",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.0"
+  }
+}
