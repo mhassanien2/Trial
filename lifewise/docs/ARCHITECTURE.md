@@ -1,6 +1,6 @@
 # LifeWise AI — Architecture and Delivery Plan
 
-Status: **Phase 1 in progress; calculation engine and data model drafted and tested.**
+Status: **Phase 3b service layer done (auth, consent, profile, export, deletion), tested against PostgreSQL. HTTP/UI layer not started.**
 This file is the single source of truth for scope. Update it when a phase changes status.
 
 ## 1. Scope decision
@@ -119,12 +119,15 @@ provider call (timeout, retries, rate limit, token accounting) → structured-ou
 
 ## 6. Security and privacy (planned controls, status in brackets)
 
-- Authentication: not yet implemented. Planned: Auth.js with a Prisma adapter or equivalent, secure
-  session cookies, password hashing with bcrypt or argon2. **[not started]**
-- Authorization: user-level filtering on every query, tested with cross-user access tests. **[not started]**
+- Authentication (services): implemented. scrypt password hashing (parameters stored with each hash), 256-bit opaque
+  session tokens stored as SHA-256 hashes, 14-day expiry, sessions revoked on logout and account deletion,
+  login rate limit (5 failures per 15 minutes per email, in-memory), generic credential errors and timing-equalised
+  unknown-user path. **[services done; no cookies or HTTP yet]**
+- Password reset, email verification, OAuth: **[not started]**
+- Authorization: every service takes the authenticated userId; cross-user isolation is tested (profile, consents, export). **[services done]**
 - Health data: sex, conditions, and medications are treated as sensitive. Field-level encryption at
   rest is planned. Conditions and medications are collected only after explicit consent. **[not started]**
-- Audit: `AuditEvent` table defined. Write paths not yet wired. **[schema only]**
+- Audit: `AuditEvent` written for register, login, failed login, logout, consent change, profile update, export, and deletion. Field values are never logged. **[done]**
 - Compliance: Saudi PDPL and hosting or transfer assessments are **not** done. No compliance claim is made.
   The app is a wellness tool, not a medical device. **[not assessed]**
 
@@ -143,8 +146,9 @@ users as verified until its entry is upgraded by a reviewer who has read the sou
 | 1. Requirements & architecture | Architecture, ERD, file structure, roadmap | **Done** (this document) |
 | 2. Design system | Tokens, components, RTL, i18n | Not started |
 | 3a. Calculation engine | BMI, energy, macros, hydration, sleep, trends | **Done, 42 tests passing** |
-| 3b. Auth & onboarding | Registration, login, consent, profile | Not started |
-| 3c. Persistence & API | Migrations, route handlers, service layer | Not started |
+| 3b. Auth & onboarding (services) | Registration, login, sessions, consent, profile, export, deletion | **Done, 11 DB integration tests + 6 security tests passing** |
+| 3b. Auth & onboarding (HTTP & UI) | Route handlers, cookies, CSRF, onboarding screens | Not started |
+| 3c. Persistence | Migration `20261014185509_init_phase1` + `Session` table applied to PostgreSQL 16 | **Done (dev and test DBs)** |
 | 3d. Feature screens | BMI, calorie, dashboard, food, exercise, sleep, hydration logging | Not started |
 | 4. AI features | Meal generation, coach, insights | Not started |
 | 5. Advanced wellness | Habits, reports, notifications, shopping list | Not started |
@@ -159,16 +163,22 @@ lifewise/
   prisma/schema.prisma
   src/lib/calc/          ← implemented (pure engine)
   src/lib/validation/    ← implemented (Zod boundary schemas)
-  src/lib/services/      ← planned (business logic, authorization)
-  src/lib/db/            ← planned (Prisma client, data-access functions)
+  src/lib/services/      ← implemented (auth, consent, profile, account; userId-scoped)
+  src/lib/security/      ← implemented (scrypt passwords, session tokens, rate limiter)
+  src/lib/db/            ← implemented (Prisma client handle)
   src/lib/ai/            ← planned (provider interface, prompts, validators)
   src/app/               ← planned (Next.js App Router; i18n under [locale])
-  tests/                 ← implemented (node:test; unit, validation, registry)
+  tests/                 ← implemented (unit) and tests/integration (PostgreSQL)
 ```
 
 ## 10. Known limitations and open risks
 
-- No UI, no API, no authentication, and no persistence yet. The engine is the only working layer.
+- No UI and no HTTP API yet. Services are callable but unreachable from a browser.
+- Registration returns EMAIL_TAKEN for a registered email, which lets someone check whether an address has an account.
+  Accepted for now; revisit with an email-verification flow.
+- The login rate limiter is in-memory and per process. It must move to a shared store before running more than one instance.
+- No CSRF protection, cookies, password reset, or email verification yet. These belong to the HTTP layer.
+- Account deletion is a hard delete. Retention rules for backups are not defined.
 - Source citations are unverified (see §7).
 - Activity multipliers and goal adjustments are conventions. Individual energy expenditure can differ
   substantially. Estimates come with stated uncertainty and should not be read as measurements.

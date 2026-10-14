@@ -28,8 +28,14 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for scope, phase status, and ri
 ```bash
 cd lifewise
 npm install
-npm test          # node:test, runs tests/*.test.ts with tsx
-npm run typecheck # tsc --noEmit (strict)
+npm run test:unit   # pure unit tests (engine, validation, security primitives)
+npm run typecheck   # tsc --noEmit (strict)
+
+# Database-backed tests need a PostgreSQL database whose name contains "lifewise_test".
+# The suite refuses to run against any other database.
+export DATABASE_URL="postgresql://lifewise:lifewise@localhost:5432/lifewise_test"
+npm run db:migrate:test   # prisma migrate deploy
+npm run test:db           # integration tests, run one file at a time
 ```
 
 Schema checks (need a placeholder URL only; no database is contacted):
@@ -43,17 +49,19 @@ DATABASE_URL="postgresql://user:pass@localhost:5432/lifewise_dev" npx prisma gen
 
 ```
 docs/ARCHITECTURE.md   architecture, ERD, phase status, risks
-prisma/schema.prisma   data model (PostgreSQL)
+prisma/schema.prisma   data model (PostgreSQL); prisma/migrations applied
 src/lib/calc/          pure, deterministic calculations (no I/O)
+src/lib/services/      auth, consent, profile, account (userId-scoped)
+src/lib/security/      password hashing, session tokens, rate limiter
 src/lib/validation/    server-side Zod schemas
-tests/                 unit, validation, and source-registry tests
+tests/                 unit tests; tests/integration = PostgreSQL tests
 ```
 
 ## Not yet available
 
-- Sign-in, registration, and onboarding
+- HTTP routes and screens for sign-in, registration, and onboarding (services exist and are tested)
 - Any UI or API route
-- Database migrations and seed data
+- Seed data (the first migration is applied; seeds are not written yet)
 - AI features (meal planner, coach)
 - Exercise, habit, report, and notification modules
 

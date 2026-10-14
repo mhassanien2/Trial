@@ -76,6 +76,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   profile          UserProfile?
+  sessions         Session[]
   consents         ConsentRecord[]
   goals            WellnessGoal[]
   bodyMeasurements BodyMeasurement[]
@@ -92,6 +93,20 @@ model User {
   notifications    Notification[]
   progressReports  ProgressReport[]
   auditEvents      AuditEvent[]
+}
+
+// Server-side sessions. Only a SHA-256 hash of the token is stored, so a database leak
+// does not expose live session tokens.
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model UserProfile {
